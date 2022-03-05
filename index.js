@@ -1,9 +1,18 @@
 // This should be hosted on a website
 "use strict";
 
+function grid_values(grid) {
+    var string = ""
+    grid.forEach(row => {
+        row.forEach(tile => {
+            string = string.concat(tile.val())
+        });
+    });
+    return string
+}
+
 function create_grid() {
     let game_container = $("<div>", { id: "game" });
-
     let grid_container = $("<div>", { id: "grid-container" });
     let tile_container = $("<div>", { id: "tile-container" });
 
@@ -11,8 +20,8 @@ function create_grid() {
         let gridRow = $("<div>", { id: "grid-row", class: `row` });
         let tileRow = $("<div>", { id: "tile-row", class: `${i}-row` });
         for (let j = 0; j < 4; j++) {
-            let gridCell = $("<div>", { id: "grid-cell", class: `cell` });
-            let tileCell = $("<div>", { id: "tile-cell", class: `${i}:${j}` });
+            let gridCell = $("<div>", { id: "grid-cell", class: `grid-cell` });
+            let tileCell = $("<div>", { id: `${i}:${j}`, class: `tile-cell` });
             gridRow.append(gridCell);
             tileRow.append(tileCell);
         }
@@ -30,7 +39,15 @@ function create_grid() {
 
 function add_new_spots(grid) {
     // check for open space
-    if (!grid.flat().includes(null)) {
+    var filledRows = 0;
+    grid.forEach((row) => {
+        let nullCol = row.find((col) => col.value === null);
+        if (!(nullCol instanceof Tile)) {
+            // There was no tile in the row that was open
+            filledRows++;
+        }
+    });
+    if (filledRows === 4) {
         return grid;
     }
 
@@ -40,16 +57,19 @@ function add_new_spots(grid) {
         spot = Math.floor(Math.random() * 4);
     };
     randomize();
-    while (grid[row][spot] != null) {
+    while (grid[row][spot].val() != null) {
         // Repeat until the chosen point is not filled
         randomize();
     }
-
-    grid[row][spot] = Math.floor(Math.random()) * 2 + 2; // Random 2 or 4
+    grid[row][spot].set(Math.floor(Math.random()) * 2 + 2); // Random 2 or 4
     return grid;
 }
 
 function slide_nums(dirx, diry, grid) {
+    grid.flat().forEach(tile => {
+        tile.anim_init() // 
+    });
+
     var is_pos;
     if (dirx != 0) {
         var x = dirx == -1 ? 1 : 2;
@@ -71,16 +91,19 @@ function slide_nums(dirx, diry, grid) {
                 let neighbor = grid[y + diry][x + dirx];
                 let cell = grid[y][x];
                 // Check move
-                if (neighbor == null) {
+                if (neighbor.val() == null) {
                     // if it is empty, move
+                    cell.anim_move(diry,dirx)
                     grid[y + diry][x + dirx] = cell;
-                    grid[y][x] = null;
-                    cameFrom[`${x},${y}`] = `${y + diry}:${x + dirx}`;
-                } else if (neighbor == cell) {
+                    neighbor.set(null);
+                    grid[y][x] = neighbor;
+                } else if (neighbor.val() == cell.val()) {
                     // if it is mergable, merge blocks
-                    grid[y + diry][x + dirx] = cell * 2;
-                    grid[y][x] = null;
-                    cameFrom[`${x},${y}`] = `${y + diry}:${x + dirx}`;
+                    cell.anim_move(diry,dirx)
+                    cell.set(cell.val() * 2);
+                    grid[y + diry][x + dirx] = cell;
+                    neighbor.set(null);
+                    grid[y][x] = neighbor;
                 }
 
                 // Check if we have reached the edge
@@ -117,20 +140,23 @@ function slide_nums(dirx, diry, grid) {
             var y = diry == -1 ? 1 : 2;
         }
     }
-    return cameFrom;
+
+    grid.flat().forEach(tile => {
+        tile.animate()
+    });
 }
 
 function update_nums(grid) {
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 4; j++) {
-            let cell = document.getElementsByClassName(`${i}:${j}`)[0];
-            if (grid[i][j] == null) {
+            let cell = document.getElementById(`${i}:${j}`);
+            if (grid[i][j].val() == null) {
                 cell.innerText = "⠀";
                 cell.style = `
                 visibility: hidden;
                 `;
             } else {
-                cell.innerText = grid[i][j];
+                cell.innerText = grid[i][j].val();
 
                 var textColor = "#776e65";
                 var textSize = "24px";
@@ -183,18 +209,15 @@ function update_nums(grid) {
                 font-size: ${textSize};
                 `;
 
-                cell.animate({});
             }
-
-            console.log(cameFrom[`${i}:${j}`]);
         }
     }
 }
 
 function update(dirx, diry, grid) {
-    let tmp_grid = JSON.stringify(grid);
+    let tmp_grid = grid_values(grid);
     slide_nums(dirx, diry, grid);
-    if (tmp_grid !== JSON.stringify(grid)) {
+    if (tmp_grid !== grid_values(grid)) {
         // if grid has changed by sliding
         add_new_spots(grid);
     }
@@ -203,12 +226,55 @@ function update(dirx, diry, grid) {
 }
 
 class Tile {
-    constructor(value) {
-        this.val = value;
+    constructor(row, col) {
+        this.value = null;
+        this.row = row
+        this.col = col
+        this.element = $(`#${row}\\:${col}`)
+        this.deleted = false
     }
 
     set(val) {
-        this.val = val;
+        this.value = val;
+        this.deleted = true
+    }
+
+    val() {
+        return this.value;
+    }
+
+    anim_init() {
+        this.element = $(`#${this.row}\\:${this.col}`)
+        this.move_rows = 0
+        this.move_cols = 0
+        this.deleted = false
+
+    }
+
+    anim_move(rows, cols) {
+        this.move_rows += rows
+        this.move_cols += cols
+        this.row += rows
+        this.col += cols
+    }
+    
+
+    animate() {
+        // animate
+        this.element.css({
+            "visibility": "visible"
+        })
+        this.element.animate({
+            left: `+=${62.5*this.move_cols}`,
+            top: `+=${62.5*this.move_rows}`
+            
+        }, 300)
+        if (this.deleted) {
+            console.log(this.move_cols);
+            console.log(this.move_cols);
+        }
+        this.element = $(`#${this.row}\\:${this.col}`)
+
     }
 }
 //-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//
@@ -249,7 +315,7 @@ body {
     margin-bottom: 0px;
 }
 
-#grid-cell, #tile-cell {
+.grid-cell, .tile-cell {
     margin-right: 5px;
     background: rgba(238, 228, 218, 0.35);
     border-radius: 4px;
@@ -263,12 +329,12 @@ body {
     position: relative;
 }
 
-#grid-cell:last-child,
-#tile-cell:last-child {
+.grid-cell:last-child,
+.tile-cell:last-child {
     margin-right: 0px;
 }
 
-#tile-cell {
+.tile-cell {
 
     transform: translate(0, -245px);
     z-index: 2;
@@ -279,11 +345,13 @@ document.head.appendChild(css);
 
 let game = create_grid();
 var grid = [
-    [null, null, null, null],
-    [null, null, null, null],
-    [null, null, null, null],
-    [null, null, null, null],
+    [new Tile(0,0), new Tile(0,1), new Tile(0,2), new Tile(0,3)],
+    [new Tile(1,0), new Tile(1,1), new Tile(1,2), new Tile(1,3)],
+    [new Tile(2,0), new Tile(2,1), new Tile(2,2), new Tile(2,3)],
+    [new Tile(3,0), new Tile(3,1), new Tile(3,2), new Tile(3,3)],
 ];
+
+
 
 add_new_spots(grid);
 add_new_spots(grid);
