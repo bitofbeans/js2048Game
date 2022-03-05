@@ -30,17 +30,19 @@ function create_grid() {
 
 function add_new_spots(grid) {
     // check for open space
-    if (!grid.flat().includes(null)) {return grid;}
-    
+    if (!grid.flat().includes(null)) {
+        return grid;
+    }
+
     var row, spot;
     const randomize = () => {
         row = Math.floor(Math.random() * 4); // 0,1,2,3
         spot = Math.floor(Math.random() * 4);
-    }
-    randomize()
+    };
+    randomize();
     while (grid[row][spot] != null) {
         // Repeat until the chosen point is not filled
-        randomize()
+        randomize();
     }
 
     grid[row][spot] = Math.floor(Math.random()) * 2 + 2; // Random 2 or 4
@@ -60,6 +62,7 @@ function slide_nums(dirx, diry, grid) {
     }
     var edgex = x;
     var edgey = y;
+    var cameFrom = {};
 
     for (let row = 0; row < 4; row++) {
         for (let i = 1; i < 4; i++) {
@@ -72,10 +75,12 @@ function slide_nums(dirx, diry, grid) {
                     // if it is empty, move
                     grid[y + diry][x + dirx] = cell;
                     grid[y][x] = null;
+                    cameFrom[`${x},${y}`] = `${y + diry}:${x + dirx}`;
                 } else if (neighbor == cell) {
                     // if it is mergable, merge blocks
                     grid[y + diry][x + dirx] = cell * 2;
                     grid[y][x] = null;
+                    cameFrom[`${x},${y}`] = `${y + diry}:${x + dirx}`;
                 }
 
                 // Check if we have reached the edge
@@ -112,6 +117,7 @@ function slide_nums(dirx, diry, grid) {
             var y = diry == -1 ? 1 : 2;
         }
     }
+    return cameFrom;
 }
 
 function update_nums(grid) {
@@ -119,11 +125,68 @@ function update_nums(grid) {
         for (let j = 0; j < 4; j++) {
             let cell = document.getElementsByClassName(`${i}:${j}`)[0];
             if (grid[i][j] == null) {
-                cell.innerText = ".";
+                cell.innerText = "⠀";
+                cell.style = `
+                visibility: hidden;
+                `;
             } else {
                 cell.innerText = grid[i][j];
 
+                var textColor = "#776e65";
+                var textSize = "24px";
+
+                {
+                    if (cell.innerHTML == "2") {
+                        var color = `rgb(238 228 218)`;
+                    }
+                    if (cell.innerHTML == "4") {
+                        var color = `rgb(237 224 200)`;
+                    }
+                    if (cell.innerHTML == "8") {
+                        var color = `rgb(242 177 121)`;
+                    }
+                    if (cell.innerHTML == "16") {
+                        var color = `rgb(245 149 99)`;
+                        var textColor = `#f9f6f2`;
+                    }
+                    if (cell.innerHTML == "32") {
+                        var color = `rgb(246 124 95)`;
+                        var textColor = `#f9f6f2`;
+                    }
+                    if (cell.innerHTML == "64") {
+                        var color = `rgb(246 94 59)`;
+                        var textColor = `#f9f6f2`;
+                    }
+                    if (cell.innerHTML == "128") {
+                        var color = `rgb(237 207 114)`;
+                    }
+                    if (cell.innerHTML == "256") {
+                        var color = `rgb(237 204 97)`;
+                    }
+                    if (cell.innerHTML == "512") {
+                        var color = `rgb(237 200 80)`;
+                    }
+                    if (cell.innerHTML == "1024") {
+                        var color = `rgb(37 197 63)`;
+                        var textSize = "20px";
+                    }
+                    if (cell.innerHTML == "2048") {
+                        var color = `rgb(237 194 46)`;
+                        var textSize = "20px";
+                    }
+                }
+
+                cell.style = `
+                visibility: visible;
+                background-color: ${color};
+                color: ${textColor};
+                font-size: ${textSize};
+                `;
+
+                cell.animate({});
             }
+
+            console.log(cameFrom[`${i}:${j}`]);
         }
     }
 }
@@ -139,12 +202,29 @@ function update(dirx, diry, grid) {
     return grid;
 }
 
+class Tile {
+    constructor(value) {
+        this.val = value;
+    }
+
+    set(val) {
+        this.val = val;
+    }
+}
 //-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//
 //-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//
 //-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//
 
 let css = document.createElement("style");
 css.innerHTML = `
+@font-face {
+    font-family: 'Sora_bold';
+    font-style: normal;
+    font-weight: 600;
+    src: url(https://fonts.gstatic.com/s/sora/v9/xMQOuFFYT72X5wkB_18qmnndmSeMmU-NKQI.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 body {
     /* Remove these 2 later*/
     text-align: center;
@@ -157,7 +237,7 @@ body {
     background-color: #bbada0;
     width: 245px;
     height: 245px;
-    border-radius: 10px;
+    border-radius: 5px;
     gap: 5px;
 } 
 
@@ -172,13 +252,15 @@ body {
 #grid-cell, #tile-cell {
     margin-right: 5px;
     background: rgba(238, 228, 218, 0.35);
-    border-radius: 5px;
+    border-radius: 4px;
     width: 57.5px;
     height: 57.5px;
     display: inline-block;
     transition-property: left, top, transform;
     transition-duration: 250ms, 250ms, 100ms;
     transform: scale(1);
+    font-family: Sora_bold;
+    position: relative;
 }
 
 #grid-cell:last-child,
