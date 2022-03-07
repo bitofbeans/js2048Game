@@ -1,6 +1,6 @@
 "use strict";
 class GameManager {
-    constructor(size, HTMLManager, InputManager) {
+    constructor(size) {
         this.size = size;
         this.html = new HTMLManager();
         this.input = new InputManager();
@@ -11,6 +11,7 @@ class GameManager {
     setup() {
         this.html.createGrid(this.size);
 
+        this.grid = new Grid(this.size);
     }
 }
 
@@ -40,24 +41,46 @@ class HTMLManager {
     }
 
     createElement(type, value) {
-        element = $(`<${type}>`)
+        element = $(`<${type}>`);
         element.innerHTML = value;
+        return element;
     }
 }
 
 class InputManager {
-    constructor() {}
+    on(key, callback) {
+        document.addEventListener(key, callback);
+    }
+
+    bind(element, event, callback) {
+        element.addEventListener(event, callback);
+    }
 }
 
 class Grid {
-    constructor() {}
+    constructor(size) {
+        // Create a grid of tiles
+        this.grid_values = [];
+        for (let y = 0; y < size; y++) {
+            let row = [];
+            for (let x = 0; x < size; x++) {
+                row.push(new Tile(y, x, 0));
+            }
+            this.grid_values.push(row);
+        }
+    }
+    
 }
 
 class Tile {
     constructor(x, y, value) {
-        this.position = { x: x, y: y };
+        this.pos = { x: x, y: y };
+        this.value = value;
+    }
+
+    set(value) {
         this.value = value;
     }
 }
 
-var game = new GameManager(4, HTMLManager, InputManager);
+var game = new GameManager(4);

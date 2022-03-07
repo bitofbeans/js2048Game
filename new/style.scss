@@ -1,10 +1,15 @@
+$grid-length: 4;
+$grid-size: 221px;
+$grid-spacing: 7px;
+$tile-size: 50px;
+
 .game-container {
     font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
     margin: 0 auto;
     position: relative;
     padding: 7px;
-    width: 221px;
-    height: 221px;
+    width: $grid-size;
+    height: $grid-size;
     border-radius: 3px;
     background-color: #bbada0;
     display: block;
@@ -12,19 +17,37 @@
 
 .grid-row {
     margin-bottom: 7px;
-    height: 50px;
+    height: $tile-size;
 }
 .grid-row:last-child {
     margin-bottom: 0;
 }
-.grid-cell {
-    background-color: rgba(238, 228, 218, 0.35);
+.grid-cell,
+.tile {
     margin-right: 7px;
-    width: 50px;
-    height: 50px;
+    width: $tile-size;
+    height: $tile-size;
     float: left;
     border-radius: 3px;
 }
-.grid-cell:last-child {
+.grid-cell:last-child,
+.tile:last-child {
     margin-right: 0px;
+}
+
+@mixin transform($args...) {
+    -webkit-transform: $args;
+    -moz-transform: $args;
+    -ms-transform: $args;
+    transform: $args;
+}
+
+@for $row from 1 through $grid-length {
+    @for $col from 1 through $grid-length {
+        &.tile-pos-#{$row}-#{$col} {
+            $xPos: floor(($tile-size + $grid-spacing) * ($col - 1));
+            $yPos: floor(($tile-size + $grid-spacing) * ($row - 1));
+            @include transform(translate($xPos, $yPos));
+        }
+    }
 }
