@@ -1,5 +1,4 @@
 // This should be hosted on a website
-"use strict";
 
 function grid_values(grid) {
     var string = "";
