@@ -236,7 +236,7 @@ function update(dirx, diry, grid) {
     });
     setTimeout(() => {
         update_nums(grid); // Update grid numbers after animation (100ms)
-    }, 2000);
+    }, 100);
 }
 
 class Tile {
@@ -283,7 +283,7 @@ class Tile {
             this.element.addClass('notransition'); // Disable transitions
             this.element.css({ transform: "translate(0,-245px)" });
             this.element.removeClass('notransition'); // Re-enable transitions
-        }, 1000); // Move back after board has been updated
+        }, 100); // Move back after board has been updated
         this.element = $(`#${this.row}\\:${this.col}`); // Retrieve new element
     }
 }
@@ -355,7 +355,7 @@ body {
     -moz-transition: none !important;
     -o-transition: none !important;
     transition: none !important;
-    }
+
 }
 
 `;

@@ -19,8 +19,8 @@ class GameManager {
             padding: 7px;
             width: 221px;
             height: 221px;
-            border-radius: 2.8px;
-            background-color: rgb(87, 74, 62);
+            border-radius: 3px;
+            background-color: #bbada0;
             display: block;
         }
 
@@ -32,12 +32,12 @@ class GameManager {
             margin-bottom: 0;
         }
         .grid-cell {
-            background-color: rgba(57, 42, 26, 0.35);
+            background-color: rgba(238, 228, 218, 0.35);
             margin-right: 7px;
             width: 50px;
             height: 50px;
             float: left;
-            border-radius: 2.8px
+            border-radius: 3px
         }
         .grid-cell:last-child {
             margin-right: 0px;
@@ -61,7 +61,7 @@ class HTMLManager {
         for (let i = 0; i < size; i++) {
             let gridRow = $("<div>", { class: "grid-row" });
             for (let j = 0; j < size; j++) {
-                let gridCell = $("<div>", { class: "grid-cell" });
+                let gridCell = $("<div>", { class: "grid-cell cell" });
                 gridRow.append(gridCell);
             }
             $(grid_container).append(gridRow);
