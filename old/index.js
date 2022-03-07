@@ -2,13 +2,13 @@
 "use strict";
 
 function grid_values(grid) {
-    var string = ""
-    grid.forEach(row => {
-        row.forEach(tile => {
-            string = string.concat(tile.val())
+    var string = "";
+    grid.forEach((row) => {
+        row.forEach((tile) => {
+            string = string.concat(tile.val());
         });
     });
-    return string
+    return string;
 }
 
 function create_grid() {
@@ -37,40 +37,44 @@ function create_grid() {
     return game_container;
 }
 
-function add_new_spots(grid) {
-    // check for open space
-    var filledRows = 0;
+function add_new_tile(grid) {
+    var filledRows = 0; // number of rows with no open space
     grid.forEach((row) => {
-        let nullCol = row.find((col) => col.value === null);
-        if (!(nullCol instanceof Tile)) {
-            // There was no tile in the row that was open
+        // check for empty spot in row(undefined if none found)
+        let colCheck = row.find((col) => col.value === null);
+        if (colCheck === undefined) {
+            // if no empty spot in row
             filledRows++;
         }
     });
-    if (filledRows === 4) {
+    if (filledRows >= 4) {
+        // if grid is filled with tiles
         return grid;
     }
 
-    var row, spot;
+    var row, col; // indexes
     const randomize = () => {
         row = Math.floor(Math.random() * 4); // 0,1,2,3
-        spot = Math.floor(Math.random() * 4);
+        col = Math.floor(Math.random() * 4); // 0,1,2,3
     };
     randomize();
-    while (grid[row][spot].val() != null) {
-        // Repeat until the chosen point is not filled
-        randomize();
+    while (grid[row][col].val() != null) {
+        // while randomly chosen spot isnt full
+        randomize(); // repeats until empty spot found
     }
-    grid[row][spot].set(Math.floor(Math.random()) * 2 + 2); // Random 2 or 4
-    return grid;
+    grid[row][col].set(Math.floor(Math.random()) * 2 + 2); // set spot to 2 or 4 at random
+    grid[row][col].element.css({ transform: "translate(0,-245px)" });
+    return grid; // return grid with new tile added
 }
 
+/**
+ * Moves tile values in the given direction
+ * @param {number} dirx => -1, 0, 1, specifies horizontal direction
+ * @param {number} diry => -1, 0, 1, specifies vertical direction
+ * @param {number[][]} grid => 2D array of tiles
+ */
 function slide_nums(dirx, diry, grid) {
-    grid.flat().forEach(tile => {
-        tile.anim_init() // 
-    });
-
-    var is_pos;
+    var is_pos; // if direction is positive (right or down)
     if (dirx != 0) {
         var x = dirx == -1 ? 1 : 2;
         var y = 0;
@@ -82,7 +86,6 @@ function slide_nums(dirx, diry, grid) {
     }
     var edgex = x;
     var edgey = y;
-    var cameFrom = {};
 
     for (let row = 0; row < 4; row++) {
         for (let i = 1; i < 4; i++) {
@@ -91,15 +94,17 @@ function slide_nums(dirx, diry, grid) {
                 let neighbor = grid[y + diry][x + dirx];
                 let cell = grid[y][x];
                 // Check move
-                if (neighbor.val() == null) {
+                if (cell.val() == null) {
+                    // Do Nothing
+                } else if (neighbor.val() == null) {
                     // if it is empty, move
-                    cell.anim_move(diry,dirx)
+                    cell.anim_move(diry, dirx);
                     grid[y + diry][x + dirx] = cell;
                     neighbor.set(null);
                     grid[y][x] = neighbor;
                 } else if (neighbor.val() == cell.val()) {
                     // if it is mergable, merge blocks
-                    cell.anim_move(diry,dirx)
+                    cell.anim_move(diry, dirx);
                     cell.set(cell.val() * 2);
                     grid[y + diry][x + dirx] = cell;
                     neighbor.set(null);
@@ -118,14 +123,12 @@ function slide_nums(dirx, diry, grid) {
                 } else {
                     // if moving vertically
                     if (y === edgey) {
-                        // and
                         done = true;
 
                         y = is_pos ? 3 - (i + 1) : i + 1;
                         continue;
                     }
                 }
-
                 x += dirx;
                 y += diry;
             }
@@ -140,10 +143,6 @@ function slide_nums(dirx, diry, grid) {
             var y = diry == -1 ? 1 : 2;
         }
     }
-
-    grid.flat().forEach(tile => {
-        tile.animate()
-    });
 }
 
 function update_nums(grid) {
@@ -202,79 +201,91 @@ function update_nums(grid) {
                     }
                 }
 
-                cell.style = `
+                cell.style.cssText += `
                 visibility: visible;
                 background-color: ${color};
                 color: ${textColor};
                 font-size: ${textSize};
+                z-index: ${2048-grid[i][j].val()}
                 `;
-
             }
         }
     }
 }
 
 function update(dirx, diry, grid) {
+    grid.flat().forEach((tile) => {
+        tile.anim_init(); // Initialize animation for each tile
+    });
     let tmp_grid = grid_values(grid);
     slide_nums(dirx, diry, grid);
+    reset_tile_coords();
+
     if (tmp_grid !== grid_values(grid)) {
         // if grid has changed by sliding
-        add_new_spots(grid);
+        add_new_tile(grid);
     }
-    update_nums(grid);
-    return grid;
+
+    grid.flat().forEach((tile) => {
+        if (tile.move_cols === 0 && tile.move_rows === 0) {
+            // If tile has not moved by sliding
+            // move back to default position
+            tile.element.css({ transform: "translate(0,-245px)" });
+            return;
+        }
+        tile.animate();
+    });
+    setTimeout(() => {
+        update_nums(grid); // Update grid numbers after animation (100ms)
+    }, 2000);
 }
 
 class Tile {
     constructor(row, col) {
+        this.aid = row * col + row - col;
         this.value = null;
-        this.row = row
-        this.col = col
-        this.element = $(`#${row}\\:${col}`)
-        this.deleted = false
+        this.row = row;
+        this.col = col;
+        this.element = $(`#${row}\\:${col}`);
+        this.move_rows = 0;
+        this.move_cols = 0;
+        this.deleted = false;
     }
-
     set(val) {
         this.value = val;
-        this.deleted = true
+        this.deleted = true;
     }
 
+    /**
+     * 
+     * @return {number} Tile value
+     */
     val() {
         return this.value;
     }
-
     anim_init() {
-        this.element = $(`#${this.row}\\:${this.col}`)
-        this.move_rows = 0
-        this.move_cols = 0
-        this.deleted = false
-
+        this.element = $(`#${this.row}\\:${this.col}`); // Get current element
+        this.move_rows = 0;
+        this.move_cols = 0;
     }
-
     anim_move(rows, cols) {
-        this.move_rows += rows
-        this.move_cols += cols
-        this.row += rows
-        this.col += cols
+        this.move_rows += rows;
+        this.move_cols += cols;
+        this.row += rows;
+        this.col += cols;
     }
-    
-
     animate() {
-        // animate
+        let transformX = 62.5 * this.move_cols;
+        let transformY = 62.5 * this.move_rows - 245; // -245 to align with grid
         this.element.css({
-            "visibility": "visible"
-        })
-        this.element.animate({
-            left: `+=${62.5*this.move_cols}`,
-            top: `+=${62.5*this.move_rows}`
-            
-        }, 300)
-        if (this.deleted) {
-            console.log(this.move_cols);
-            console.log(this.move_cols);
-        }
-        this.element = $(`#${this.row}\\:${this.col}`)
-
+            transform: `translate(${transformX}px,${transformY}px)`,
+        });
+        setTimeout(() => {
+            this.element.addClass('notransition'); // Disable transitions
+            this.element.css({ transform: "translate(0,-245px)" });
+            this.element.removeClass('notransition'); // Re-enable transitions
+        }, 1000); // Move back after board has been updated
+        this.element = $(`#${this.row}\\:${this.col}`); // Retrieve new element
     }
 }
 //-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//
@@ -322,9 +333,11 @@ body {
     width: 57.5px;
     height: 57.5px;
     display: inline-block;
+    
     transition-property: left, top, transform;
     transition-duration: 250ms, 250ms, 100ms;
     transform: scale(1);
+    
     font-family: Sora_bold;
     position: relative;
 }
@@ -335,9 +348,15 @@ body {
 }
 
 .tile-cell {
-
     transform: translate(0, -245px);
     z-index: 2;
+
+.notransition {
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -o-transition: none !important;
+    transition: none !important;
+    }
 }
 
 `;
@@ -345,16 +364,18 @@ document.head.appendChild(css);
 
 let game = create_grid();
 var grid = [
-    [new Tile(0,0), new Tile(0,1), new Tile(0,2), new Tile(0,3)],
-    [new Tile(1,0), new Tile(1,1), new Tile(1,2), new Tile(1,3)],
-    [new Tile(2,0), new Tile(2,1), new Tile(2,2), new Tile(2,3)],
-    [new Tile(3,0), new Tile(3,1), new Tile(3,2), new Tile(3,3)],
+    [new Tile(0, 0), new Tile(0, 1), new Tile(0, 2), new Tile(0, 3)],
+    [new Tile(1, 0), new Tile(1, 1), new Tile(1, 2), new Tile(1, 3)],
+    [new Tile(2, 0), new Tile(2, 1), new Tile(2, 2), new Tile(2, 3)],
+    [new Tile(3, 0), new Tile(3, 1), new Tile(3, 2), new Tile(3, 3)],
 ];
 
+grid.flat().forEach((tile) => {
+    tile.anim_init();
+});
 
-
-add_new_spots(grid);
-add_new_spots(grid);
+add_new_tile(grid);
+add_new_tile(grid);
 update_nums(grid);
 
 document.addEventListener("keydown", (event) => {
@@ -373,3 +394,17 @@ document.addEventListener("keydown", (event) => {
             break;
     }
 });
+
+const reset_tile_coords = () => {
+    var i = 0;
+    var j = 0;
+    grid.forEach((row) => {
+        j = 0;
+        row.forEach((tile) => {
+            tile.row = i;
+            tile.col = j;
+            j++;
+        });
+        i++;
+    });
+};
