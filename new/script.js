@@ -1,16 +1,19 @@
-let dependencies = ["//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"];
+function addElementToDom(location, type, values) {
+    let element = document.createElement(type); // "script", "link"
+    Object.entries(values).forEach(([key, value]) => {
+        element.setAttribute(key, value); // element.src = value
+    });
+    document[location].appendChild(element);
+}
 
+let dependencies = ["//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"];
 dependencies.forEach((url) => {
-    // Add each dependency to the document
-    let dependency = document.createElement("script");
-    dependency.src = url;
-    document.body.appendChild(dependency);
+    addElementToDom("body", "script", { src: url }); // Add each dependency to the document
 });
 
-// Wait for all dependencies to load 
+addElementToDom("head", "link", { rel: "stylesheet", href: "./style.css" }); // Add CSS
+
+// Wait for all dependencies to load
 setTimeout(() => {
-    // then load script
-    let script = document.createElement("script");
-    script.src = "./index.js";
-    document.body.appendChild(script);
+    addElementToDom("body", "script", { src: "./index.js" }); // then load script
 }, 200);
