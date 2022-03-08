@@ -18,9 +18,9 @@ $tile-size: 50px;
 .grid-row {
     margin-bottom: 7px;
     height: $tile-size;
-}
-.grid-row:last-child {
-    margin-bottom: 0;
+    &:last-child {
+        margin-bottom: 0;
+    }
 }
 .grid-cell,
 .tile {
@@ -29,10 +29,13 @@ $tile-size: 50px;
     height: $tile-size;
     float: left;
     border-radius: 3px;
+    &:last-child {
+        margin-right: 0px;
+    }
 }
-.grid-cell:last-child,
-.tile:last-child {
-    margin-right: 0px;
+
+.grid-cell {
+    background-color: rgba(238, 228, 218, 0.35);
 }
 
 @mixin transform($args...) {

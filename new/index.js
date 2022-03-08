@@ -12,7 +12,12 @@ class GameManager {
         this.html.createGrid(this.size);
 
         this.grid = new Grid(this.size);
+        this.gameover = false;
+        this.win = false;
+        this.score = 0;
     }
+
+    addRandomTile() {}
 }
 
 class HTMLManager {
@@ -60,21 +65,71 @@ class InputManager {
 class Grid {
     constructor(size) {
         // Create a grid of tiles
-        this.grid_values = [];
-        for (let y = 0; y < size; y++) {
-            let row = [];
-            for (let x = 0; x < size; x++) {
-                row.push(new Tile(y, x, 0));
+        this.tiles = [];
+        for (let row = 0; row < size; row++) {
+            let rowValue = [];
+            for (let col = 0; col < size; col++) {
+                rowValue.push(null);
             }
-            this.grid_values.push(row);
+            this.tiles.push(rowValue);
         }
     }
-    
+
+    forEachTile(callback) {
+        // Repeat over each tile in the grid
+        for (var row = 0; row < size; row++) {
+            for (var col = 0; col < size; col++) {
+                callback({ row: row, col: col }, this.tiles[row][col]);
+            }
+        }
+    }
+
+    getAvailableTiles() {
+        // Return an array of all available tile coords
+        let tiles = [];
+
+        this.forEachTile((row, col, tile) => {
+            if (tile === null) {
+                tiles.push({ row: row, col: col });
+            }
+        });
+
+        return tiles;
+    }
+
+    getRandomTile() {
+        // Gets a random available tile
+        let availableTiles = this.getAvailableTiles();
+
+        if (availableTiles.length > 0) {
+            let randomIndex = Math.floor(Math.random() * availableTiles.length); // One random tile
+            return availableTiles[randomIndex];
+        }
+    }
+
+    addRandomTile() {
+        if (Math.random < 0.9) {
+            let value = 2;
+        } else {
+            let value = 4;
+        }
+
+        let tile = new Tile(this.getRandomTile(), value);
+    }
+
+    insertTile(tile) {
+        this.tiles[tile.row][tile.col] = tile;
+    }
+
+    removeTile(tile) {
+        this.tiles[tile.row][tile.col] = null;
+    }
 }
 
 class Tile {
-    constructor(x, y, value) {
-        this.pos = { x: x, y: y };
+    constructor(position, value) {
+        this.row = position.row;
+        this.col = position.col;
         this.value = value;
     }
 
