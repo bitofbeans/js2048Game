@@ -15,9 +15,10 @@ class GameManager {
         this.gameover = false;
         this.win = false;
         this.score = 0;
-    }
 
-    addRandomTile() {}
+        this.grid.addRandomTile();
+        this.grid.addRandomTile();
+    }
 }
 
 class HTMLManager {
@@ -65,6 +66,7 @@ class InputManager {
 class Grid {
     constructor(size) {
         // Create a grid of tiles
+        this.size = size;
         this.tiles = [];
         for (let row = 0; row < size; row++) {
             let rowValue = [];
@@ -77,8 +79,8 @@ class Grid {
 
     forEachTile(callback) {
         // Repeat over each tile in the grid
-        for (var row = 0; row < size; row++) {
-            for (var col = 0; col < size; col++) {
+        for (var row = 0; row < this.size; row++) {
+            for (var col = 0; col < this.size; col++) {
                 callback({ row: row, col: col }, this.tiles[row][col]);
             }
         }
@@ -89,7 +91,7 @@ class Grid {
         let tiles = [];
 
         this.forEachTile((row, col, tile) => {
-            if (tile === null) {
+            if (tile == null) {
                 tiles.push({ row: row, col: col });
             }
         });
@@ -108,12 +110,9 @@ class Grid {
     }
 
     addRandomTile() {
-        if (Math.random < 0.9) {
-            let value = 2;
-        } else {
-            let value = 4;
-        }
+        let value = Math.random < 0.9 ? 2 : 4;
 
+        console.log(this.getRandomTile());
         let tile = new Tile(this.getRandomTile(), value);
     }
 
