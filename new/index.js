@@ -16,8 +16,29 @@ class GameManager {
         this.win = false;
         this.score = 0;
 
-        this.grid.addRandomTile();
-        this.grid.addRandomTile();
+        this.createRandomTile();
+        this.createRandomTile();
+
+        console.log(this.grid.tiles);
+    }
+
+    createTileElement(position, value) {
+        let classes = [`tile`,`tile-pos-${position.row+1}-${position.col+1}`];
+        let tileElement = this.html.createElement('div', value, classes);
+        $(".tile-container").append(tileElement);
+    }
+
+    addRandomTileToGrid() {
+        // Tile's value is usually 2, but sometimes 4
+        let value = Math.random() < 0.9 ? 2 : 4;
+        let tile = new Tile(this.grid.getRandomTile(), value);
+        this.grid.insertTile(tile);
+        return tile;
+    }
+
+    createRandomTile() {
+        let tile = this.addRandomTileToGrid();
+        this.createTileElement({ row: tile.row, col: tile.col }, tile.value);
     }
 }
 
@@ -46,9 +67,10 @@ class HTMLManager {
         $(document.body).append(game_container);
     }
 
-    createElement(type, value) {
-        element = $(`<${type}>`);
-        element.innerHTML = value;
+    createElement(type, value, classes) {
+        let element = $(`<${type}>`);
+        element.text(value);
+        classes.forEach((cssClass) => element.addClass(cssClass));
         return element;
     }
 }
@@ -81,7 +103,7 @@ class Grid {
         // Repeat over each tile in the grid
         for (var row = 0; row < this.size; row++) {
             for (var col = 0; col < this.size; col++) {
-                callback({ row: row, col: col }, this.tiles[row][col]);
+                callback(row, col, this.tiles[row][col]);
             }
         }
     }
@@ -95,25 +117,17 @@ class Grid {
                 tiles.push({ row: row, col: col });
             }
         });
-
         return tiles;
     }
 
     getRandomTile() {
-        // Gets a random available tile
+        // Gets a random available tile coordinate
         let availableTiles = this.getAvailableTiles();
 
         if (availableTiles.length > 0) {
             let randomIndex = Math.floor(Math.random() * availableTiles.length); // One random tile
             return availableTiles[randomIndex];
         }
-    }
-
-    addRandomTile() {
-        let value = Math.random < 0.9 ? 2 : 4;
-
-        console.log(this.getRandomTile());
-        let tile = new Tile(this.getRandomTile(), value);
     }
 
     insertTile(tile) {

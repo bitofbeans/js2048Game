@@ -1,10 +1,18 @@
+@import url(https://fontlibrary.org//face/clear-sans);
+
 $grid-length: 4;
 $grid-size: 221px;
 $grid-spacing: 7px;
 $tile-size: 50px;
 
+@mixin transform($args...) {
+    -webkit-transform: $args;
+    -moz-transform: $args;
+    -ms-transform: $args;
+    transform: $args;
+}
+
 .game-container {
-    font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
     margin: 0 auto;
     position: relative;
     padding: 7px;
@@ -13,6 +21,16 @@ $tile-size: 50px;
     border-radius: 3px;
     background-color: #bbada0;
     display: block;
+}
+
+.grid-container {
+    position: absolute;
+    z-index: 1;
+}
+
+.tile-container {
+    position: absolute;
+    z-index: 2;
 }
 
 .grid-row {
@@ -27,7 +45,6 @@ $tile-size: 50px;
     margin-right: 7px;
     width: $tile-size;
     height: $tile-size;
-    float: left;
     border-radius: 3px;
     &:last-child {
         margin-right: 0px;
@@ -35,22 +52,25 @@ $tile-size: 50px;
 }
 
 .grid-cell {
+    float: left;
     background-color: rgba(238, 228, 218, 0.35);
 }
 
-@mixin transform($args...) {
-    -webkit-transform: $args;
-    -moz-transform: $args;
-    -ms-transform: $args;
-    transform: $args;
-}
+.tile {
+    position: absolute; // Makes transform() relative to the top-left corner, and I don't know why
+    font-family: "ClearSansBold", Arial, sans-serif;
+    font-size: 25px;
 
-@for $row from 1 through $grid-length {
-    @for $col from 1 through $grid-length {
-        &.tile-pos-#{$row}-#{$col} {
-            $xPos: floor(($tile-size + $grid-spacing) * ($col - 1));
-            $yPos: floor(($tile-size + $grid-spacing) * ($row - 1));
-            @include transform(translate($xPos, $yPos));
+    text-align: center;
+    line-height: $tile-size;
+
+    @for $row from 1 through $grid-length {
+        @for $col from 1 through $grid-length {
+            &.tile-pos-#{$row}-#{$col} {
+                $xPos: floor(($tile-size + $grid-spacing) * ($col - 1));
+                $yPos: floor(($tile-size + $grid-spacing) * ($row - 1));
+                @include transform(translate($xPos, $yPos));
+            }
         }
     }
 }
