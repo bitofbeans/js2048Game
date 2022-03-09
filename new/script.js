@@ -16,7 +16,7 @@ addElement("head", "link", { rel: "stylesheet", href: "./style.css" }); // Add C
 // Wait for all dependencies to load
 setTimeout(() => {
     addElement("body", "script", { src: "./index.js" }); // then load script
-}, 200);
+}, 100);
 
 /*
 

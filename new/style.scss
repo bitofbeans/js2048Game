@@ -12,6 +12,10 @@ $tile-size: 50px;
     transform: $args;
 }
 
+body {
+    background-color: #000000;
+}
+
 .game-container {
     margin: 0 auto;
     position: relative;
@@ -57,10 +61,12 @@ $tile-size: 50px;
 }
 
 .tile {
+    transition: all 0.5s;
+
     position: absolute; // Makes transform() relative to the top-left corner, and I don't know why
     font-family: "ClearSansBold", Arial, sans-serif;
     font-size: 25px;
-
+    color: #776e65;
     text-align: center;
     line-height: $tile-size;
 
@@ -71,6 +77,24 @@ $tile-size: 50px;
                 $yPos: floor(($tile-size + $grid-spacing) * ($row - 1));
                 @include transform(translate($xPos, $yPos));
             }
+        }
+    }
+    // prettier-ignore
+    $colors: rgb(238, 228, 218) 2,
+             rgb(237, 224, 200) 4,
+             rgb(242, 177, 121) 8,
+             rgb(245, 149, 99) 16,
+             rgb(246, 124, 95) 32,
+             rgb(246, 94, 59) 64,
+             rgb(237, 207, 114) 128,
+             rgb(237, 204, 97) 256,
+             rgb(237, 200, 80) 512,
+             rgb(237, 197, 63) 1024,
+             rgb(237, 194, 46) 2048;
+
+    @each $color, $number in $colors {
+        &.tile-#{$number} {
+            background-color: $color;
         }
     }
 }

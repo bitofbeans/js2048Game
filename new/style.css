@@ -1,4 +1,8 @@
 @import url(https://fontlibrary.org//face/clear-sans);
+body {
+  background-color: #000000;
+}
+
 .game-container {
   margin: 0 auto;
   position: relative;
@@ -48,9 +52,12 @@
 }
 
 .tile {
+  -webkit-transition: all 0.5s;
+  transition: all 0.5s;
   position: absolute;
   font-family: "ClearSansBold", Arial, sans-serif;
   font-size: 25px;
+  color: #776e65;
   text-align: center;
   line-height: 50px;
 }
@@ -133,5 +140,49 @@
 .tile.tile-pos-4-4 {
   -webkit-transform: translate(171px, 171px);
   transform: translate(171px, 171px);
+}
+
+.tile.tile-2 {
+  background-color: #eee4da;
+}
+
+.tile.tile-4 {
+  background-color: #ede0c8;
+}
+
+.tile.tile-8 {
+  background-color: #f2b179;
+}
+
+.tile.tile-16 {
+  background-color: #f59563;
+}
+
+.tile.tile-32 {
+  background-color: #f67c5f;
+}
+
+.tile.tile-64 {
+  background-color: #f65e3b;
+}
+
+.tile.tile-128 {
+  background-color: #edcf72;
+}
+
+.tile.tile-256 {
+  background-color: #edcc61;
+}
+
+.tile.tile-512 {
+  background-color: #edc850;
+}
+
+.tile.tile-1024 {
+  background-color: #edc53f;
+}
+
+.tile.tile-2048 {
+  background-color: #edc22e;
 }
 /*# sourceMappingURL=style.css.map */

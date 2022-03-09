@@ -16,38 +16,41 @@ class GameManager {
         this.win = false;
         this.score = 0;
 
-        this.createRandomTile();
-        this.createRandomTile();
+        this.grid.addRandomTileToGrid();
+        this.grid.addRandomTileToGrid();
 
-        console.log(this.grid.tiles);
-    }
-
-    createTileElement(position, value) {
-        let classes = [`tile`,`tile-pos-${position.row+1}-${position.col+1}`];
-        let tileElement = this.html.createElement('div', value, classes);
-        $(".tile-container").append(tileElement);
-    }
-
-    addRandomTileToGrid() {
-        // Tile's value is usually 2, but sometimes 4
-        let value = Math.random() < 0.9 ? 2 : 4;
-        let tile = new Tile(this.grid.getRandomTile(), value);
-        this.grid.insertTile(tile);
-        return tile;
-    }
-
-    createRandomTile() {
-        let tile = this.addRandomTileToGrid();
-        this.createTileElement({ row: tile.row, col: tile.col }, tile.value);
+        this.html.update(this.grid.tiles);
     }
 }
 
 class HTMLManager {
+    update(grid) {
+        // We are going to be deleting the tiles and readding them seamlessly
+        // so we don't have to track the tile elements long term
+
+        // Wait for the window to be updated
+        window.requestAnimationFrame(() => {
+            $(".tile-container").empty(); // Removes all child nodes
+
+            grid.forEach((column) => {
+                column.forEach((tile) => {
+                    // Null means there is no tile there
+                    if (tile != null) {
+                        this.createTileElement(tile);
+                    }
+                });
+            });
+        });
+    }
+
     addCSStoElement(element, style) {
         $(element).css(style);
     }
 
     createGrid(size) {
+        // Game container will contain grid and tile containers
+        // Grid container will contain rows of tiles
+        // Tile container will contain tiles that are visible on screen
         let game_container = $("<div>", { class: "game-container" });
         let grid_container = $("<div>", { class: "grid-container" });
         let tile_container = $("<div>", { class: "tile-container" });
@@ -67,11 +70,55 @@ class HTMLManager {
         $(document.body).append(game_container);
     }
 
-    createElement(type, value, classes) {
+    createElement(type, value, classes = null) {
         let element = $(`<${type}>`);
         element.text(value);
-        classes.forEach((cssClass) => element.addClass(cssClass));
+        if (classes) {
+            classes.forEach((cssClass) => element.addClass(cssClass));
+        }
         return element;
+    }
+
+    createTileElement(tile) {
+        let tileElement = this.createElement("div", tile.value);
+
+        let cssRow = tile.oldRow ? tile.oldRow + 1 : tile.row + 1;
+        let cssCol = tile.oldCol ? tile.oldCol + 1 : tile.col + 1;
+        let classes = [`tile`, `tile-${tile.value}`, `tile-pos-${cssRow}-${cssCol}`];
+
+        if (tile.getOldPos()) {
+            // If the tile has an old position
+            // On the next frame, move the tile's position to where it should be
+            window.requestAnimationFrame(() => {
+                // Since the tile has been placed at the previous position, we need to
+                // change its position back to where it is supposed to be
+                this.replacePosClass(tileElement, tile);
+            });
+        } else if (tile.mergedWith != undefined) {
+            this.createTileElement(tile.mergedWith); // Create merged tile to show merge animation
+        }
+
+        $(tileElement).addClass(classes);
+        $(".tile-container").append(tileElement);
+    }
+
+    replacePosClass(tileElement, tile) {
+        // You can input a function and it will return all classes of the element
+        $(tileElement).removeClass((index, classNames) => {
+            // Split string of classes into an array
+            classNames = classNames.split(" ");
+
+            // For each classname
+            classNames.forEach((className) => {
+                // Check if the class is relating to tile position
+                if (className.substring(0, 8) == "tile-pos") {
+                    // substring returns a string inbetween those values
+                    $(tileElement).removeClass(className);
+                }
+            });
+        });
+
+        $(tileElement).addClass(`tile-pos-${tile.row + 1}-${tile.col + 1}`);
     }
 }
 
@@ -130,6 +177,14 @@ class Grid {
         }
     }
 
+    addRandomTileToGrid() {
+        // Tile's value is usually 2, but sometimes 4
+        let value = Math.random() < 0.9 ? 2 : 4;
+        let tile = new Tile(this.getRandomTile(), value);
+        this.insertTile(tile);
+        return tile;
+    }
+
     insertTile(tile) {
         this.tiles[tile.row][tile.col] = tile;
     }
@@ -144,11 +199,36 @@ class Tile {
         this.row = position.row;
         this.col = position.col;
         this.value = value;
+        this.move({ row: this.row, col: this.col });
     }
 
-    set(value) {
+    setValue(value) {
         this.value = value;
+    }
+
+    move(position) {
+        this.oldRow = this.row;
+        this.oldCol = this.col;
+        this.row = position.row;
+        this.col = position.col;
+    }
+
+    merge(tile) {
+        this.mergedWith = tile;
+    }
+
+    getPos() {
+        return { row: this.row, col: this.col };
+    }
+
+    getOldPos() {
+        if (this.oldRow) {
+            return { row: this.oldRow, col: this.oldCol };
+        } else {
+            return false;
+        }
     }
 }
 
-var game = new GameManager(4);
+let game = new GameManager(4);
+
