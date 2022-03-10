@@ -48,15 +48,28 @@ class GameManager {
                     let nextIndex = j - 1;
                     let tilePos = row[j].getPos();
                     if (row[nextIndex] === null) {
+                        // Move tile coordinates
                         row[j].move({ row: row[j].row, col: row[j].col - 1 });
+                        // Modify grid
                         this.grid.insertTile(row[j]);
+                        this.grid.removeTile(tilePos);
+                    } else if (row[nextIndex].value == row[j].value) {
+                        // Move tile coordinates
+                        row[j].move({ row: row[j].row, col: row[j].col - 1 });
+
+                        let merged = new Tile(row[nextIndex].getPos(), row[j].value * 2);
+                        merged.merge(row[j], row[nextIndex]);
+                        // Modify row
+                        row[nextIndex] = merged;
+                        // Modify grid
+                        this.grid.insertTile(merged);
                         this.grid.removeTile(tilePos);
                     }
                 }
             }
             this.grid.tiles[i] = row;
         }
-        this.updateTiles()
+        this.updateTiles();
     }
 
     slideRight() {
@@ -65,7 +78,7 @@ class GameManager {
             for (let i = 3; i >= 0; i--) {
                 if (row[i] === null) continue; // skip empty tiles
                 // else
-                for (let j = i; j <= 3; j++) {
+                for (let j = i; j < 3; j++) {
                     // Start index at i, move left until edge
                     let nextIndex = j + 1;
                     let tilePos = row[j].getPos();
@@ -73,12 +86,23 @@ class GameManager {
                         row[j].move({ row: row[j].row, col: row[j].col + 1 });
                         this.grid.insertTile(row[j]);
                         this.grid.removeTile(tilePos);
+                    } else if (row[nextIndex].value == row[j].value) {
+                        // Move tile coordinates
+                        row[j].move({ row: row[j].row, col: row[j].col + 1 });
+
+                        let merged = new Tile(row[nextIndex].getPos(), row[j].value * 2);
+                        merged.merge(row[j], row[nextIndex]);
+                        // Modify row
+                        row[nextIndex] = merged;
+                        // Modify grid
+                        this.grid.insertTile(merged);
+                        this.grid.removeTile(tilePos);
                     }
                 }
             }
             this.grid.tiles[rowIndex] = row;
         }
-        this.updateTiles()
+        this.updateTiles();
     }
 }
 
@@ -129,9 +153,11 @@ class HTMLManager {
         $(document.body).append(game_container);
     }
 
-    createElement(type, value, classes = null) {
+    createElement(type, value = null, classes = null) {
         let element = $(`<${type}>`);
-        element.text(value);
+        if (value) {
+            element.text(value);
+        }
         if (classes) {
             classes.forEach((cssClass) => element.addClass(cssClass));
         }
@@ -139,7 +165,7 @@ class HTMLManager {
     }
 
     createTileElement(tile) {
-        let tileElement = this.createElement("div", tile.value);
+        let tileElement = this.createElement("div");
 
         let cssRow = tile.oldRow != null ? tile.oldRow + 1 : tile.row + 1;
         let cssCol = tile.oldCol != null ? tile.oldCol + 1 : tile.col + 1;
@@ -153,11 +179,15 @@ class HTMLManager {
                 // change its position back to where it is supposed to be
                 this.replacePosClass(tileElement, tile);
             });
-        } else if (tile.mergedWith != undefined) {
-            this.createTileElement(tile.mergedWith); // Create merged tile to show merge animation
+        } else if (tile.mergedWith != null) {
+            classes.push("tile-merged");
+            this.createTileElement(tile.mergedWith[0]); // Create merged tile to show merge animation
+            this.createTileElement(tile.mergedWith[1]); // Create merged tile to show merge animation
         }
+        let tileText = this.createElement("div", tile.value, ["tile-text"]);
 
         $(tileElement).addClass(classes);
+        $(tileElement).append(tileText)
         $(".tile-container").append(tileElement);
     }
 
@@ -295,11 +325,11 @@ class Tile {
         this.row = position.row;
         this.col = position.col;
         this.value = value;
-        this.move({ row: this.row, col: this.col });
     }
 
-    setValue(value) {
-        this.value = value;
+    setOldPos(position) {
+        this.oldRow = position.row;
+        this.oldCol = position.col;
     }
 
     move(position) {
@@ -311,8 +341,8 @@ class Tile {
         this.col = position.col;
     }
 
-    merge(tile) {
-        this.mergedWith = tile;
+    merge(tile1, tile2) {
+        this.mergedWith = [tile1, tile2];
     }
 
     getPos() {

@@ -1,4 +1,33 @@
 @import url(https://fontlibrary.org//face/clear-sans);
+@-webkit-keyframes pop {
+  0% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+  50% {
+    -webkit-transform: scale(1.2);
+            transform: scale(1.2);
+  }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+@keyframes pop {
+  0% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+  50% {
+    -webkit-transform: scale(1.2);
+            transform: scale(1.2);
+  }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
 body {
   background-color: #000000;
 }
@@ -33,8 +62,24 @@ body {
   margin-bottom: 0;
 }
 
+.grid-cell {
+  float: left;
+  background-color: rgba(238, 228, 218, 0.35);
+}
+
+/* 
+Explanation for CSS:
+
+You cannot use an animation and a transformation at the same time
+as far as I know.
+That is why the outer div, or ".tile" is like a car
+It transports the inside to wherever it needs to.
+But the inside, or ".tile-text" is the div
+with the background color and text.
+*/
 .grid-cell,
-.tile {
+.tile,
+.tile-text {
   margin-right: 7px;
   width: 50px;
   height: 50px;
@@ -42,13 +87,36 @@ body {
 }
 
 .grid-cell:last-child,
-.tile:last-child {
+.tile:last-child,
+.tile-text:last-child {
   margin-right: 0px;
 }
 
-.grid-cell {
-  float: left;
-  background-color: rgba(238, 228, 218, 0.35);
+.tile,
+.tile-text {
+  position: absolute;
+}
+
+.tile-text {
+  font-family: "ClearSansBold", Arial, sans-serif;
+  font-size: 25px;
+  color: #776e65;
+  text-align: center;
+  line-height: 50px;
+}
+
+.tile-merged .tile-text {
+  z-index: 5;
+  -webkit-animation-name: pop;
+          animation-name: pop;
+  -webkit-animation-duration: 200ms;
+          animation-duration: 200ms;
+  -webkit-animation-timing-function: ease;
+          animation-timing-function: ease;
+  -webkit-animation-delay: 100ms;
+          animation-delay: 100ms;
+  -webkit-animation-fill-mode: backwards;
+          animation-fill-mode: backwards;
 }
 
 .tile {
@@ -58,12 +126,6 @@ body {
   transition-property: -webkit-transform;
   transition-property: transform;
   transition-property: transform, -webkit-transform;
-  position: absolute;
-  font-family: "ClearSansBold", Arial, sans-serif;
-  font-size: 25px;
-  color: #776e65;
-  text-align: center;
-  line-height: 50px;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -151,47 +213,47 @@ body {
   transform: translate(171px, 171px);
 }
 
-.tile.tile-2 {
+.tile-2 .tile-text {
   background-color: #eee4da;
 }
 
-.tile.tile-4 {
+.tile-4 .tile-text {
   background-color: #ede0c8;
 }
 
-.tile.tile-8 {
+.tile-8 .tile-text {
   background-color: #f2b179;
 }
 
-.tile.tile-16 {
+.tile-16 .tile-text {
   background-color: #f59563;
 }
 
-.tile.tile-32 {
+.tile-32 .tile-text {
   background-color: #f67c5f;
 }
 
-.tile.tile-64 {
+.tile-64 .tile-text {
   background-color: #f65e3b;
 }
 
-.tile.tile-128 {
+.tile-128 .tile-text {
   background-color: #edcf72;
 }
 
-.tile.tile-256 {
+.tile-256 .tile-text {
   background-color: #edcc61;
 }
 
-.tile.tile-512 {
+.tile-512 .tile-text {
   background-color: #edc850;
 }
 
-.tile.tile-1024 {
+.tile-1024 .tile-text {
   background-color: #edc53f;
 }
 
-.tile.tile-2048 {
+.tile-2048 .tile-text {
   background-color: #edc22e;
 }
 /*# sourceMappingURL=style.css.map */
