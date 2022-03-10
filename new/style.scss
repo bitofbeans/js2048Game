@@ -5,6 +5,17 @@ $grid-size: 221px;
 $grid-spacing: 7px;
 $tile-size: 50px;
 
+@keyframes pop {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
 @mixin transform($args...) {
     -webkit-transform: $args;
     -moz-transform: $args;
@@ -44,8 +55,25 @@ body {
         margin-bottom: 0;
     }
 }
+
+.grid-cell {
+    float: left;
+    background-color: rgba(238, 228, 218, 0.35);
+}
+/* 
+Explanation for CSS:
+
+You cannot use an animation and a transformation at the same time
+as far as I know.
+That is why the outer div, or ".tile" is like a car
+It transports the inside to wherever it needs to.
+But the inside, or ".tile-text" is the div
+with the background color and text.
+*/
+
 .grid-cell,
-.tile {
+.tile,
+.tile-text {
     margin-right: 7px;
     width: $tile-size;
     height: $tile-size;
@@ -55,21 +83,31 @@ body {
     }
 }
 
-.grid-cell {
-    float: left;
-    background-color: rgba(238, 228, 218, 0.35);
+.tile,
+.tile-text {
+    position: absolute; // Makes transform() relative to the top-left corner, and I don't know why
 }
 
-.tile {
-    transition: 100ms ease-in-out;
-    transition-property: transform;
-    position: absolute; // Makes transform() relative to the top-left corner, and I don't know why
+.tile-text {
     font-family: "ClearSansBold", Arial, sans-serif;
     font-size: 25px;
     color: #776e65;
     text-align: center;
     line-height: $tile-size;
+}
 
+.tile-merged .tile-text {
+    z-index: 5;
+    animation-name: pop;
+    animation-duration: 200ms;
+    animation-timing-function: ease;
+    animation-delay: 100ms;
+    animation-fill-mode: backwards;
+}
+
+.tile {
+    transition: 100ms ease-in-out;
+    transition-property: transform;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -84,22 +122,23 @@ body {
             }
         }
     }
-    // prettier-ignore
-    $colors: rgb(238, 228, 218) 2,
-             rgb(237, 224, 200) 4,
-             rgb(242, 177, 121) 8,
-             rgb(245, 149, 99) 16,
-             rgb(246, 124, 95) 32,
-             rgb(246, 94, 59) 64,
-             rgb(237, 207, 114) 128,
-             rgb(237, 204, 97) 256,
-             rgb(237, 200, 80) 512,
-             rgb(237, 197, 63) 1024,
-             rgb(237, 194, 46) 2048;
+}
 
-    @each $color, $number in $colors {
-        &.tile-#{$number} {
-            background-color: $color;
-        }
+// prettier-ignore
+$colors: rgb(238, 228, 218) 2,
+        rgb(237, 224, 200) 4,
+        rgb(242, 177, 121) 8,
+        rgb(245, 149, 99) 16,
+        rgb(246, 124, 95) 32,
+        rgb(246, 94, 59) 64,
+        rgb(237, 207, 114) 128,
+        rgb(237, 204, 97) 256,
+        rgb(237, 200, 80) 512,
+        rgb(237, 197, 63) 1024,
+        rgb(237, 194, 46) 2048;
+
+@each $color, $number in $colors {
+    .tile-#{$number} .tile-text {
+        background-color: $color;
     }
 }
