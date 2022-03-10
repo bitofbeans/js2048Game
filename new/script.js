@@ -6,21 +6,18 @@ function addElement(location, type, values) {
     document[location].appendChild(element);
 }
 
-let dependencies = ["//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"];
-dependencies.forEach((url) => {
-    addElement("body", "script", { src: url }); // Add each dependency to the document
-});
+addElement("body", "script", { src: "//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" }); // Add jquery
+
 addElement("head", "link", { rel: "stylesheet", href: "./style.css" }); // Add CSS
 
-// Wait for all dependencies to load
 setTimeout(() => {
-    addElement("body", "script", { src: "./index.js" }); // then load script
+    // Wait for all dependencies to load then load script
+    addElement("body", "script", { src: "./index.js" });
 }, 500);
 
 /*
 
 Full script (shortened)
 
-function m(e,t,s){let c=document.createElement(t);Object.entries(s).forEach(([e,t])=>{c.setAttribute(e,t)}),document[e].appendChild(c)}let x=["//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"];x.forEach(e=>{m("body","script",{src:e})}),m("head","link",{rel:"stylesheet",href:"./style.css"}),setTimeout(()=>{m("body","script",{src:"./index.js"})},200);
-
+function m(e,t,d){let s=document.createElement(t);Object.entries(d).forEach(([e,t])=>{s.setAttribute(e,t)}),document[e].appendChild(s)}m("body","script",{src:"//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"}),m("head","link",{rel:"stylesheet",href:"./style.css"}),setTimeout(()=>{m("body","script",{src:"./index.js"})},500);
 */
