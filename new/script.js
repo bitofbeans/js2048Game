@@ -7,14 +7,13 @@ function addElement(location, type, values) {
     return element;
 }
 
-let jQuery = addElement("body", "script", { src: "//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" }); // Add jquery
+let jQuery = addElement("body", "script", {
+    src: "//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js",
+}); // Add jquery
 
 let css = addElement("head", "link", { rel: "stylesheet", href: "./style.css" }); // Add CSS
 
-jQuery.addEventListener('load', () => {
-    // Wait for jQuery to load then load script
-    addElement("body", "script", { src: "./index.js" });
-  })
+jQuery.onload = () => addElement("body", "script", { src: "./index.js" });
 
 /*
 Full script (shortened)

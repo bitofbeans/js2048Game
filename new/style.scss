@@ -61,8 +61,8 @@ body {
 }
 
 .tile {
-    transition: all 0.5s;
-
+    transition: 100ms ease-in-out;
+    transition-property: transform;
     position: absolute; // Makes transform() relative to the top-left corner, and I don't know why
     font-family: "ClearSansBold", Arial, sans-serif;
     font-size: 25px;

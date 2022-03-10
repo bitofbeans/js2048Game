@@ -23,12 +23,7 @@ class GameManager {
         console.log(this.grid.tiles);
 
         setTimeout(() => {
-            this.slide(this.grid.tiles[0], "left");
-            this.slide(this.grid.tiles[1], "left");
-            this.slide(this.grid.tiles[2], "left");
-            this.slide(this.grid.tiles[3], "left");
-
-            this.html.update(this.grid.tiles);
+            this.slideRight();
             console.log(this.grid.tiles);
         }, 1000);
     }
@@ -69,6 +64,22 @@ class GameManager {
         }
 
         return row;
+    }
+
+    slideLeft() {
+        for (let i = 0; i < 4; i++) {
+            const row = this.grid.tiles[i];
+            this.slide(row, "left");
+        }
+        this.html.update(this.grid.tiles);
+    }
+
+    slideRight() {
+        for (let i = 0; i < 4; i++) {
+            const row = this.grid.tiles[i];
+            this.slide(row, "right");
+        }
+        this.html.update(this.grid.tiles);
     }
 }
 

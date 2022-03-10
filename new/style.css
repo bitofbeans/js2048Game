@@ -52,8 +52,12 @@ body {
 }
 
 .tile {
-  -webkit-transition: all 0.5s;
-  transition: all 0.5s;
+  -webkit-transition: 100ms ease-in-out;
+  transition: 100ms ease-in-out;
+  -webkit-transition-property: -webkit-transform;
+  transition-property: -webkit-transform;
+  transition-property: transform;
+  transition-property: transform, -webkit-transform;
   position: absolute;
   font-family: "ClearSansBold", Arial, sans-serif;
   font-size: 25px;
