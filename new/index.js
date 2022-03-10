@@ -19,9 +19,7 @@ class GameManager {
         this.grid.addRandomTileToGrid();
         this.grid.addRandomTileToGrid();
 
-
         this.html.update(this.grid.tiles);
-
         console.log(this.grid.tiles);
 
         setTimeout(() => {
@@ -258,7 +256,7 @@ class Tile {
     }
 
     move(position) {
-        if (this.oldRow == undefined) {
+        if (this.oldRow == null) {
             this.oldRow = this.row;
             this.oldCol = this.col;
         }
