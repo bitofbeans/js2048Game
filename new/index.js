@@ -19,7 +19,58 @@ class GameManager {
         this.grid.addRandomTileToGrid();
         this.grid.addRandomTileToGrid();
 
+
         this.html.update(this.grid.tiles);
+
+        console.log(this.grid.tiles);
+
+        setTimeout(() => {
+            this.slide(this.grid.tiles[0], "left");
+            this.slide(this.grid.tiles[1], "left");
+            this.slide(this.grid.tiles[2], "left");
+            this.slide(this.grid.tiles[3], "left");
+
+            this.html.update(this.grid.tiles);
+            console.log(this.grid.tiles);
+        }, 1000);
+    }
+
+    slide(row, direction) {
+        var dirx, diry;
+        if (direction === "left") {
+            [dirx, diry] = [-1, 0];
+        } else if (direction === "right") {
+            [dirx, diry] = [1, 0];
+        } else if (direction === "up") {
+            [dirx, diry] = [0, -1];
+        } else if (direction === "down") {
+            [dirx, diry] = [0, 1];
+        }
+
+        // row = [null, 2, 2, 2]
+        // row = [
+        //     null,
+        //     new Tile({ row: 0, col: 1 }, 2),
+        //     new Tile({ row: 0, col: 2 }, 2),
+        //     new Tile({ row: 0, col: 3 }, 2),
+        // ];
+
+        for (let i = 0; i < 4; i++) {
+            if (row[i] === null) continue; // skip empty tiles
+            // else
+            for (let j = i; j > 0; j--) {
+                // Start index at i, move left until edge
+                let leftIndex = j - 1;
+                let tilePos = row[j].getPos();
+                if (row[leftIndex] === null) {
+                    row[j].move({ row: row[j].row + diry, col: row[j].col + dirx });
+                    this.grid.insertTile(row[j]);
+                    this.grid.removeTile(tilePos);
+                }
+            }
+        }
+
+        return row;
     }
 }
 
@@ -207,8 +258,10 @@ class Tile {
     }
 
     move(position) {
-        this.oldRow = this.row;
-        this.oldCol = this.col;
+        if (this.oldRow == undefined) {
+            this.oldRow = this.row;
+            this.oldCol = this.col;
+        }
         this.row = position.row;
         this.col = position.col;
     }
@@ -222,7 +275,8 @@ class Tile {
     }
 
     getOldPos() {
-        if (this.oldRow) {
+        if (this.oldRow != undefined) {
+            // if an old position exists
             return { row: this.oldRow, col: this.oldCol };
         } else {
             return false;
@@ -231,4 +285,3 @@ class Tile {
 }
 
 let game = new GameManager(4);
-

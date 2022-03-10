@@ -10,13 +10,12 @@ let dependencies = ["//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"
 dependencies.forEach((url) => {
     addElement("body", "script", { src: url }); // Add each dependency to the document
 });
-
 addElement("head", "link", { rel: "stylesheet", href: "./style.css" }); // Add CSS
 
 // Wait for all dependencies to load
 setTimeout(() => {
     addElement("body", "script", { src: "./index.js" }); // then load script
-}, 100);
+}, 500);
 
 /*
 
