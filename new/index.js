@@ -3,12 +3,13 @@ class GameManager {
     constructor(size) {
         this.size = size;
         this.html = new HTMLManager();
-        this.input = new InputManager();
+        this.input = new InputManager(this);
 
         this.setup();
     }
 
     setup() {
+        // Initialize
         this.html.createGrid(this.size);
 
         this.grid = new Grid(this.size);
@@ -16,70 +17,68 @@ class GameManager {
         this.win = false;
         this.score = 0;
 
+        // Add to grid
         this.grid.addRandomTileToGrid();
         this.grid.addRandomTileToGrid();
 
         this.html.update(this.grid.tiles);
-        console.log(this.grid.tiles);
 
-        setTimeout(() => {
-            this.slideRight();
-            console.log(this.grid.tiles);
-        }, 1000);
+        // Bind key events
+        this.input.addKeys("ArrowLeft", () => this.slideLeft());
+        this.input.addKeys("ArrowRight", () => this.slideRight());
     }
+    updateTiles() {
+        this.html.update(this.grid.tiles);
 
-    slide(row, direction) {
-        var dirx, diry;
-        if (direction === "left") {
-            [dirx, diry] = [-1, 0];
-        } else if (direction === "right") {
-            [dirx, diry] = [1, 0];
-        } else if (direction === "up") {
-            [dirx, diry] = [0, -1];
-        } else if (direction === "down") {
-            [dirx, diry] = [0, 1];
-        }
-
-        // row = [null, 2, 2, 2]
-        // row = [
-        //     null,
-        //     new Tile({ row: 0, col: 1 }, 2),
-        //     new Tile({ row: 0, col: 2 }, 2),
-        //     new Tile({ row: 0, col: 3 }, 2),
-        // ];
-
-        for (let i = 0; i < 4; i++) {
-            if (row[i] === null) continue; // skip empty tiles
-            // else
-            for (let j = i; j > 0; j--) {
-                // Start index at i, move left until edge
-                let leftIndex = j - 1;
-                let tilePos = row[j].getPos();
-                if (row[leftIndex] === null) {
-                    row[j].move({ row: row[j].row + diry, col: row[j].col + dirx });
-                    this.grid.insertTile(row[j]);
-                    this.grid.removeTile(tilePos);
-                }
-            }
-        }
-
-        return row;
+        window.requestAnimationFrame(() => {
+            // Wait until the next frame to reset tiles
+            // Otherwise, it deletes too soon, and animation breaks
+            this.grid.resetTiles();
+        });
     }
 
     slideLeft() {
         for (let i = 0; i < 4; i++) {
-            const row = this.grid.tiles[i];
-            this.slide(row, "left");
+            let row = this.grid.tiles[i];
+            for (let i = 0; i < 4; i++) {
+                if (row[i] === null) continue; // skip empty tiles
+                // else
+                for (let j = i; j > 0; j--) {
+                    // Start index at i, move left until edge
+                    let nextIndex = j - 1;
+                    let tilePos = row[j].getPos();
+                    if (row[nextIndex] === null) {
+                        row[j].move({ row: row[j].row, col: row[j].col - 1 });
+                        this.grid.insertTile(row[j]);
+                        this.grid.removeTile(tilePos);
+                    }
+                }
+            }
+            this.grid.tiles[i] = row;
         }
-        this.html.update(this.grid.tiles);
+        this.updateTiles()
     }
 
     slideRight() {
-        for (let i = 0; i < 4; i++) {
-            const row = this.grid.tiles[i];
-            this.slide(row, "right");
+        for (let rowIndex = 0; rowIndex < 4; rowIndex++) {
+            let row = this.grid.tiles[rowIndex];
+            for (let i = 3; i >= 0; i--) {
+                if (row[i] === null) continue; // skip empty tiles
+                // else
+                for (let j = i; j <= 3; j++) {
+                    // Start index at i, move left until edge
+                    let nextIndex = j + 1;
+                    let tilePos = row[j].getPos();
+                    if (row[nextIndex] === null) {
+                        row[j].move({ row: row[j].row, col: row[j].col + 1 });
+                        this.grid.insertTile(row[j]);
+                        this.grid.removeTile(tilePos);
+                    }
+                }
+            }
+            this.grid.tiles[rowIndex] = row;
         }
-        this.html.update(this.grid.tiles);
+        this.updateTiles()
     }
 }
 
@@ -142,8 +141,8 @@ class HTMLManager {
     createTileElement(tile) {
         let tileElement = this.createElement("div", tile.value);
 
-        let cssRow = tile.oldRow ? tile.oldRow + 1 : tile.row + 1;
-        let cssCol = tile.oldCol ? tile.oldCol + 1 : tile.col + 1;
+        let cssRow = tile.oldRow != null ? tile.oldRow + 1 : tile.row + 1;
+        let cssCol = tile.oldCol != null ? tile.oldCol + 1 : tile.col + 1;
         let classes = [`tile`, `tile-${tile.value}`, `tile-pos-${cssRow}-${cssCol}`];
 
         if (tile.getOldPos()) {
@@ -183,8 +182,35 @@ class HTMLManager {
 }
 
 class InputManager {
-    on(key, callback) {
-        document.addEventListener(key, callback);
+    constructor(self) {
+        this.gamemanager = self;
+        // Prevent default on arrow key press
+        document.addEventListener("keydown", (event) => {
+            switch (event.key) {
+                case "ArrowLeft":
+                    event.preventDefault();
+                    break;
+                case "ArrowRight":
+                    event.preventDefault();
+                    break;
+                case "ArrowUp":
+                    event.preventDefault();
+                    break;
+                case "ArrowDown":
+                    event.preventDefault();
+                    break;
+            }
+        });
+    }
+
+    addKeys(key, func) {
+        document.addEventListener("keydown", (event) => {
+            switch (event.key) {
+                case key:
+                    func.call(this.gamemanager);
+                    break;
+            }
+        });
     }
 
     bind(element, event, callback) {
@@ -251,6 +277,16 @@ class Grid {
 
     removeTile(tile) {
         this.tiles[tile.row][tile.col] = null;
+    }
+
+    resetTiles() {
+        this.forEachTile((row, col, tile) => {
+            if (tile != null) {
+                delete tile.oldRow;
+                delete tile.oldCol;
+                delete tile.mergedWith;
+            }
+        });
     }
 }
 

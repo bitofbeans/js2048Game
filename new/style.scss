@@ -70,6 +70,11 @@ body {
     text-align: center;
     line-height: $tile-size;
 
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+
     @for $row from 1 through $grid-length {
         @for $col from 1 through $grid-length {
             &.tile-pos-#{$row}-#{$col} {

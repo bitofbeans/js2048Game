@@ -64,6 +64,11 @@ body {
   color: #776e65;
   text-align: center;
   line-height: 50px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+      user-select: none;
 }
 
 .tile.tile-pos-1-1 {
