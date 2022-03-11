@@ -55,6 +55,8 @@
 }
 
 .game-container {
+  -webkit-box-sizing: content-box;
+          box-sizing: content-box;
   margin: 0 auto;
   position: relative;
   padding: 7px;
