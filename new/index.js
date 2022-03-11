@@ -24,18 +24,17 @@ class GameManager {
         this.html.update(this.grid.tiles);
 
         // Bind key events
-        this.input.addKeys("ArrowLeft", () => this.slideLeft());
-        this.input.addKeys("ArrowRight", () => this.slideRight());
-        this.input.addKeys("ArrowUp", () => this.slideUp());
-        this.input.addKeys("ArrowDown", () => this.slideDown());
-        this.input.addKeys("a", () => this.slideLeft());
-        this.input.addKeys("d", () => this.slideRight());
-        this.input.addKeys("w", () => this.slideUp());
-        this.input.addKeys("s", () => this.slideDown());
+        this.input.addKeys("ArrowLeft", () => this.slide("left"));
+        this.input.addKeys("ArrowRight", () => this.slide("right"));
+        this.input.addKeys("ArrowUp", () => this.slide("up"));
+        this.input.addKeys("ArrowDown", () => this.slide("down"));
+        this.input.addKeys("a", () => this.slide("left"));
+        this.input.addKeys("d", () => this.slide("right"));
+        this.input.addKeys("w", () => this.slide("up"));
+        this.input.addKeys("s", () => this.slide("down"));
     }
-    updateTiles() {
-        this.grid.addRandomTileToGrid();
 
+    updateTiles() {
         this.html.update(this.grid.tiles);
 
         window.requestAnimationFrame(() => {
@@ -43,6 +42,33 @@ class GameManager {
             // Otherwise, it deletes too soon, and animation breaks
             this.grid.resetTiles();
         });
+    }
+
+    slide(dir) {
+        // Master slide function
+        let oldGrid = this.grid.stringify()
+
+        switch (dir) {
+            case "up":
+                this.slideUp()
+                break;
+            case "down":
+                this.slideDown()
+                break;
+            case "left":
+                this.slideLeft()
+                break;
+            case "right":
+                this.slideRight()
+                break;
+        }
+        
+        if (oldGrid !== this.grid.stringify()) {
+            // if grid has changed after sliding
+            this.grid.addRandomTileToGrid();
+        }
+
+        this.updateTiles()
     }
 
     slideLeft() {
@@ -82,7 +108,6 @@ class GameManager {
             }
             this.grid.tiles[rowIndex] = row;
         }
-        this.updateTiles();
     }
 
     slideRight() {
@@ -120,7 +145,6 @@ class GameManager {
             }
             this.grid.tiles[rowIndex] = row;
         }
-        this.updateTiles();
     }
 
     slideUp() {
@@ -162,7 +186,6 @@ class GameManager {
                 }
             }
         }
-        this.updateTiles();
     }
 
     slideDown() {
@@ -202,7 +225,6 @@ class GameManager {
                 }
             }
         }
-        this.updateTiles();
     }
 }
 
@@ -224,10 +246,6 @@ class HTMLManager {
                 });
             });
         });
-    }
-
-    addCSStoElement(element, style) {
-        $(element).css(style);
     }
 
     createGrid(size) {
@@ -425,11 +443,13 @@ class Grid {
         return [this.tiles[0][col], this.tiles[1][col], this.tiles[2][col], this.tiles[3][col]];
     }
 
-    setCol(col, value) {
-        this.tiles[0][col] = value[0];
-        this.tiles[1][col] = value[1];
-        this.tiles[2][col] = value[2];
-        this.tiles[3][col] = value[3];
+    stringify() {
+        let string = "";
+        this.forEachTile((row, col, tile) => {
+            let value = tile ? tile.value : null;
+            string = string.concat(value);
+        });
+        return string;
     }
 }
 
