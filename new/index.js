@@ -21,7 +21,7 @@ class GameManager {
         this.grid.addRandomTileToGrid();
         this.grid.addRandomTileToGrid();
 
-        this.html.update(this.grid.tiles);
+        this.html.update(this.grid);
 
         // Bind key events
         this.input.addKeys("ArrowLeft", () => this.slide("left"));
@@ -34,41 +34,37 @@ class GameManager {
         this.input.addKeys("s", () => this.slide("down"));
     }
 
-    updateTiles() {
-        this.html.update(this.grid.tiles);
-
-        window.requestAnimationFrame(() => {
-            // Wait until the next frame to reset tiles
-            // Otherwise, it deletes too soon, and animation breaks
-            this.grid.resetTiles();
-        });
-    }
-
     slide(dir) {
         // Master slide function
-        let oldGrid = this.grid.stringify()
+        let oldGrid = this.grid.stringify();
 
         switch (dir) {
             case "up":
-                this.slideUp()
+                this.slideUp();
                 break;
             case "down":
-                this.slideDown()
+                this.slideDown();
                 break;
             case "left":
-                this.slideLeft()
+                this.slideLeft();
                 break;
             case "right":
-                this.slideRight()
+                this.slideRight();
                 break;
         }
-        
+
+        this.grid.forEachTile(() => {
+            if (tile != null) {
+                tile.new = false; // Make sure tile doesn't animate like new tile
+            }
+        });
+
         if (oldGrid !== this.grid.stringify()) {
             // if grid has changed after sliding
             this.grid.addRandomTileToGrid();
         }
 
-        this.updateTiles()
+        this.html.update(this.grid); // Update html (screen)
     }
 
     slideLeft() {
@@ -236,8 +232,13 @@ class HTMLManager {
         // Wait for the window to be updated
         window.requestAnimationFrame(() => {
             $(".tile-container").empty(); // Removes all child nodes
+            console.log(grid.tiles[0]);
+            console.log(grid.tiles[1]);
+            console.log(grid.tiles[2]);
+            console.log(grid.tiles[3]);
+            console.log("---");
 
-            grid.forEach((column) => {
+            grid.tiles.forEach((column) => {
                 column.forEach((tile) => {
                     // Null means there is no tile there
                     if (tile != null) {
@@ -245,6 +246,8 @@ class HTMLManager {
                     }
                 });
             });
+
+            grid.resetTiles();
         });
     }
 
@@ -301,7 +304,7 @@ class HTMLManager {
             classes.push("tile-merged");
             this.createTileElement(tile.mergedWith[0]); // Create merged tile to show merge animation
             this.createTileElement(tile.mergedWith[1]); // Create merged tile to show merge animation
-        } else {
+        } else if (tile.new) {
             classes.push("tile-new");
         }
         let tileText = this.createElement("div", tile.value, ["tile-text"]);
@@ -338,15 +341,19 @@ class InputManager {
         document.addEventListener("keydown", (event) => {
             switch (event.key) {
                 case "ArrowLeft":
+                    console.log("left");
                     event.preventDefault();
                     break;
                 case "ArrowRight":
+                    console.log("right");
                     event.preventDefault();
                     break;
                 case "ArrowUp":
+                    console.log("up");
                     event.preventDefault();
                     break;
                 case "ArrowDown":
+                    console.log("down");
                     event.preventDefault();
                     break;
             }
@@ -458,6 +465,7 @@ class Tile {
         this.row = position.row;
         this.col = position.col;
         this.value = value;
+        this.new = true;
     }
 
     setOldPos(position) {
