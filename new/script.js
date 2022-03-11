@@ -1,5 +1,3 @@
-
-
 function addElement(location, type, values) {
     let element = document.createElement(type); // "script", "link"
     Object.entries(values).forEach(([key, value]) => {
@@ -10,7 +8,7 @@ function addElement(location, type, values) {
 }
 
 let jQuery = addElement("body", "script", {
-    src: "https:/ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js",
+    src: "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js",
 }); // Add jquery
 
 let css = addElement("head", "link", { rel: "stylesheet", href: "https://bitofbeans.github.io/js2048Game/new/style.css" }); // Add CSS
