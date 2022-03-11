@@ -51,6 +51,7 @@ class GameManager {
             for (let i = 0; i < 4; i++) {
                 if (row[i] === null) continue; // skip empty tiles
                 // else
+                row[i].setOldPos(row[i].getPos()); // Ensure that the tile has an old position (that it is not a new tile)
                 for (let j = i; j > 0; j--) {
                     // Start index at i, move left until edge
                     let nextIndex = j - 1;
@@ -90,6 +91,7 @@ class GameManager {
             for (let i = 3; i >= 0; i--) {
                 if (row[i] === null) continue; // skip empty tiles
                 // else
+                row[i].setOldPos(row[i].getPos()); // Ensure that the tile has an old position (that it is not a new tile)
                 for (let j = i; j < 3; j++) {
                     // Start index at i, move right until edge
                     let nextIndex = j + 1;
@@ -120,12 +122,14 @@ class GameManager {
         }
         this.updateTiles();
     }
+
     slideUp() {
         for (var rowIndex = 0; rowIndex < 4; rowIndex++) {
             let row = this.grid.getCol(rowIndex);
             for (let i = 0; i < 4; i++) {
                 if (row[i] === null) continue; // skip empty tiles
                 // else
+                row[i].setOldPos(row[i].getPos()); // Ensure that the tile has an old position (that it is not a new tile)
                 for (let j = i; j > 0; j--) {
                     // Start index at i, move left until edge
                     let nextIndex = j - 1;
@@ -158,7 +162,6 @@ class GameManager {
                 }
             }
         }
-        console.log(this.grid.tiles);
         this.updateTiles();
     }
 
@@ -168,6 +171,7 @@ class GameManager {
             for (let i = 3; i >= 0; i--) {
                 if (row[i] === null) continue; // skip empty tiles
                 // else
+                row[i].setOldPos(row[i].getPos()); // Ensure that the tile has an old position (that it is not a new tile)
                 for (let j = i; j < 3; j++) {
                     // Start index at i, move left until edge
                     let nextIndex = j + 1;
@@ -279,8 +283,7 @@ class HTMLManager {
             classes.push("tile-merged");
             this.createTileElement(tile.mergedWith[0]); // Create merged tile to show merge animation
             this.createTileElement(tile.mergedWith[1]); // Create merged tile to show merge animation
-        } else if (tile.new) {
-            console.log("bnew");
+        } else {
             classes.push("tile-new");
         }
         let tileText = this.createElement("div", tile.value, ["tile-text"]);
@@ -414,7 +417,6 @@ class Grid {
                 delete tile.oldRow;
                 delete tile.oldCol;
                 delete tile.mergedWith;
-                tile.new = false;
             }
         });
     }
@@ -436,7 +438,6 @@ class Tile {
         this.row = position.row;
         this.col = position.col;
         this.value = value;
-        this.new = true;
     }
 
     setOldPos(position) {
