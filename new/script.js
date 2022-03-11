@@ -7,11 +7,11 @@ function addElement(location, type, values) {
     return element;
 }
 
-let jQuery = addElement("body", "script", {
+var jQuery = addElement("body", "script", {
     src: "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js",
 }); // Add jquery
 
-let css = addElement("head", "link", { rel: "stylesheet", href: "https://bitofbeans.github.io/js2048Game/new/style.css" }); // Add CSS
+var css = addElement("head", "link", { rel: "stylesheet", href: "https://bitofbeans.github.io/js2048Game/new/style.css" }); // Add CSS
 
 jQuery.onload = () => addElement("body", "script", { src: "https://bitofbeans.github.io/js2048Game/new/index.js" });
 
