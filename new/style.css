@@ -1,5 +1,4 @@
 @import url(https://fontlibrary.org//face/clear-sans);
-@import url(https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css);
 @-webkit-keyframes pop {
   0% {
     -webkit-transform: scale(0);
@@ -103,6 +102,11 @@
 
 .button:hover {
   cursor: pointer;
+}
+
+.button:focus {
+  -webkit-box-shadow: 0 0 3px black;
+          box-shadow: 0 0 3px black;
 }
 
 .delete-button {

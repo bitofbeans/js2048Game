@@ -34,10 +34,16 @@ class GameManager {
         this.input.addKeys("s", () => this.slide("down"));
 
         this.input.bind($(".delete-button"), "click", () => {
-            let game_container = $(".game-container")
-            game_container.addClass("fade")
-            setTimeout(() => game_container.remove(), 200)
+            let game_container = $(".game-container");
+            game_container.addClass("fade");
+            setTimeout(() => game_container.remove(), 200);
         });
+
+        // this.reset();
+    }
+
+    reset() {
+        this.input.removeListeners();
     }
 
     slide(dir) {
@@ -269,7 +275,7 @@ class HTMLManager {
             $(grid_container).append(gridRow);
         }
 
-        let delete_button = $("<div>", { text: "×", class: "button delete-button" });
+        let delete_button = $("<div>", { tabindex: "0", text: "×", class: "button delete-button" });
         $(game_container).append(delete_button);
 
         $(game_container).append(grid_container);
@@ -341,41 +347,71 @@ class HTMLManager {
 class InputManager {
     constructor(self) {
         this.gamemanager = self;
+        this.listeners = {};
         // Prevent default on arrow key press
-        document.addEventListener("keydown", (event) => {
+        const preventDefault = (event) => {
             switch (event.key) {
                 case "ArrowLeft":
-                    console.log("left");
                     event.preventDefault();
                     break;
                 case "ArrowRight":
-                    console.log("right");
                     event.preventDefault();
                     break;
                 case "ArrowUp":
-                    console.log("up");
                     event.preventDefault();
                     break;
                 case "ArrowDown":
-                    console.log("down");
                     event.preventDefault();
                     break;
             }
-        });
+        };
+
+        this.addToListenerList("keydown", preventDefault, document);
+        document.addEventListener("keydown", preventDefault);
     }
 
-    addKeys(key, func) {
-        document.addEventListener("keydown", (event) => {
+    addToListenerList(event, callback, location) {
+        this.listeners[`${Object.keys(this.listeners).length + 1}`] = [event, callback, location];
+    }
+
+    addKeys(key, callback) {
+        const func = (event) => {
             switch (event.key) {
                 case key:
-                    func.call(this.gamemanager);
+                    callback.call(this.gamemanager);
                     break;
             }
-        });
+        };
+        this.addToListenerList("keydown", func, document);
+        document.addEventListener("keydown", func);
     }
 
     bind(element, event, callback) {
         element.on(event, callback);
+        this.addToListenerList("keydown", callback, element[0]);
+
+    }
+
+    removeListeners(index = null) {
+        console.log("tried");
+        Object.entries(this.listeners).forEach((entry) => {
+            // entry structure \/
+            //    key = "1", "2"...
+            //    array = [
+            //          event = "keydown"...
+            //          func = () => {...}
+            //          location = document, element...
+            //    ]
+
+            let key = entry[0];
+            let event = entry[1][0];
+            let func = entry[1][1];
+            let location = entry[1][2];
+            if (index == null || index == key) {
+                location.removeEventListener(event, func);
+            }
+            console.log(location);
+        });
     }
 }
 
@@ -504,4 +540,5 @@ class Tile {
     }
 }
 
-let game = new GameManager(4);
+$(".game-container").remove();
+var game = new GameManager(4);
