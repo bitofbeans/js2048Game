@@ -16,6 +16,17 @@ $tile-size: 50px;
         transform: scale(1);
     }
 }
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
 @mixin transform($args...) {
     -webkit-transform: $args;
     -moz-transform: $args;
@@ -105,10 +116,17 @@ with the background color and text.
     animation-fill-mode: backwards;
 }
 
+.tile-new .tile-text {
+    animation-name: fade-in;
+    animation-duration: 200ms;
+    animation-timing-function: ease;
+    animation-delay: 100ms;
+    animation-fill-mode: backwards;
+}
+
 .tile {
     transition: 100ms ease-in-out;
     transition-property: transform;
-    -webkit-touch-callout: none;
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;

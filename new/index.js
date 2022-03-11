@@ -26,8 +26,16 @@ class GameManager {
         // Bind key events
         this.input.addKeys("ArrowLeft", () => this.slideLeft());
         this.input.addKeys("ArrowRight", () => this.slideRight());
+        this.input.addKeys("ArrowUp", () => this.slideUp());
+        this.input.addKeys("ArrowDown", () => this.slideDown());
+        this.input.addKeys("a", () => this.slideLeft());
+        this.input.addKeys("d", () => this.slideRight());
+        this.input.addKeys("w", () => this.slideUp());
+        this.input.addKeys("s", () => this.slideDown());
     }
     updateTiles() {
+        this.grid.addRandomTileToGrid();
+
         this.html.update(this.grid.tiles);
 
         window.requestAnimationFrame(() => {
@@ -38,8 +46,8 @@ class GameManager {
     }
 
     slideLeft() {
-        for (let i = 0; i < 4; i++) {
-            let row = this.grid.tiles[i];
+        for (let rowIndex = 0; rowIndex < 4; rowIndex++) {
+            let row = this.grid.tiles[rowIndex];
             for (let i = 0; i < 4; i++) {
                 if (row[i] === null) continue; // skip empty tiles
                 // else
@@ -53,7 +61,11 @@ class GameManager {
                         // Modify grid
                         this.grid.insertTile(row[j]);
                         this.grid.removeTile(tilePos);
-                    } else if (row[nextIndex].value == row[j].value) {
+                    } else if (
+                        row[nextIndex].value == row[j].value &&
+                        row[nextIndex].mergedWith == null &&
+                        row[j].mergedWith == null
+                    ) {
                         // Move tile coordinates
                         row[j].move({ row: row[j].row, col: row[j].col - 1 });
 
@@ -67,7 +79,7 @@ class GameManager {
                     }
                 }
             }
-            this.grid.tiles[i] = row;
+            this.grid.tiles[rowIndex] = row;
         }
         this.updateTiles();
     }
@@ -79,14 +91,18 @@ class GameManager {
                 if (row[i] === null) continue; // skip empty tiles
                 // else
                 for (let j = i; j < 3; j++) {
-                    // Start index at i, move left until edge
+                    // Start index at i, move right until edge
                     let nextIndex = j + 1;
                     let tilePos = row[j].getPos();
                     if (row[nextIndex] === null) {
                         row[j].move({ row: row[j].row, col: row[j].col + 1 });
                         this.grid.insertTile(row[j]);
                         this.grid.removeTile(tilePos);
-                    } else if (row[nextIndex].value == row[j].value) {
+                    } else if (
+                        row[nextIndex].value == row[j].value &&
+                        row[nextIndex].mergedWith == null &&
+                        row[j].mergedWith == null
+                    ) {
                         // Move tile coordinates
                         row[j].move({ row: row[j].row, col: row[j].col + 1 });
 
@@ -101,6 +117,86 @@ class GameManager {
                 }
             }
             this.grid.tiles[rowIndex] = row;
+        }
+        this.updateTiles();
+    }
+    slideUp() {
+        for (var rowIndex = 0; rowIndex < 4; rowIndex++) {
+            let row = this.grid.getCol(rowIndex);
+            for (let i = 0; i < 4; i++) {
+                if (row[i] === null) continue; // skip empty tiles
+                // else
+                for (let j = i; j > 0; j--) {
+                    // Start index at i, move left until edge
+                    let nextIndex = j - 1;
+                    let tilePos = row[j].getPos();
+                    if (row[nextIndex] === null) {
+                        // Move tile coordinates
+                        row[j].move({ row: row[j].row - 1, col: row[j].col });
+                        // Modify grid
+                        this.grid.insertTile(row[j]);
+                        this.grid.removeTile(tilePos);
+                    } else if (
+                        row[nextIndex].value == row[j].value &&
+                        row[nextIndex].mergedWith == null &&
+                        row[j].mergedWith == null
+                    ) {
+                        // Move tile coordinates
+                        row[j].move({ row: row[j].row - 1, col: row[j].col });
+
+                        let merged = new Tile(row[nextIndex].getPos(), row[j].value * 2);
+                        merged.merge(row[j], row[nextIndex]);
+                        // Modify row
+                        row[nextIndex] = merged;
+                        // Modify grid
+                        this.grid.insertTile(merged);
+                        this.grid.removeTile(tilePos);
+                    }
+                    // getCol() returns a copy of the column, so we need to re-get the column
+                    // to avoid issues
+                    row = this.grid.getCol(rowIndex); // IMPORTANT!!
+                }
+            }
+        }
+        console.log(this.grid.tiles);
+        this.updateTiles();
+    }
+
+    slideDown() {
+        for (let rowIndex = 0; rowIndex < 4; rowIndex++) {
+            let row = this.grid.getCol(rowIndex);
+            for (let i = 3; i >= 0; i--) {
+                if (row[i] === null) continue; // skip empty tiles
+                // else
+                for (let j = i; j < 3; j++) {
+                    // Start index at i, move left until edge
+                    let nextIndex = j + 1;
+                    let tilePos = row[j].getPos();
+                    if (row[nextIndex] === null) {
+                        row[j].move({ row: row[j].row + 1, col: row[j].col });
+                        this.grid.insertTile(row[j]);
+                        this.grid.removeTile(tilePos);
+                    } else if (
+                        row[nextIndex].value == row[j].value &&
+                        row[nextIndex].mergedWith == null &&
+                        row[j].mergedWith == null
+                    ) {
+                        // Move tile coordinates
+                        row[j].move({ row: row[j].row + 1, col: row[j].col });
+
+                        let merged = new Tile(row[nextIndex].getPos(), row[j].value * 2);
+                        merged.merge(row[j], row[nextIndex]);
+                        // Modify row
+                        row[nextIndex] = merged;
+                        // Modify grid
+                        this.grid.insertTile(merged);
+                        this.grid.removeTile(tilePos);
+                    }
+                    // getCol() returns a copy of the column, so we need to re-get the column
+                    // to avoid issues
+                    row = this.grid.getCol(rowIndex); // IMPORTANT!!
+                }
+            }
         }
         this.updateTiles();
     }
@@ -183,11 +279,14 @@ class HTMLManager {
             classes.push("tile-merged");
             this.createTileElement(tile.mergedWith[0]); // Create merged tile to show merge animation
             this.createTileElement(tile.mergedWith[1]); // Create merged tile to show merge animation
+        } else if (tile.new) {
+            console.log("bnew");
+            classes.push("tile-new");
         }
         let tileText = this.createElement("div", tile.value, ["tile-text"]);
 
         $(tileElement).addClass(classes);
-        $(tileElement).append(tileText)
+        $(tileElement).append(tileText);
         $(".tile-container").append(tileElement);
     }
 
@@ -315,8 +414,20 @@ class Grid {
                 delete tile.oldRow;
                 delete tile.oldCol;
                 delete tile.mergedWith;
+                tile.new = false;
             }
         });
+    }
+
+    getCol(col) {
+        return [this.tiles[0][col], this.tiles[1][col], this.tiles[2][col], this.tiles[3][col]];
+    }
+
+    setCol(col, value) {
+        this.tiles[0][col] = value[0];
+        this.tiles[1][col] = value[1];
+        this.tiles[2][col] = value[2];
+        this.tiles[3][col] = value[3];
     }
 }
 
@@ -325,6 +436,7 @@ class Tile {
         this.row = position.row;
         this.col = position.col;
         this.value = value;
+        this.new = true;
     }
 
     setOldPos(position) {

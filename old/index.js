@@ -314,7 +314,6 @@ body {
     width: 245px;
     height: 245px;
     border-radius: 5px;
-    gap: 5px;
 } 
 
 #grid-row, #tile-row {
