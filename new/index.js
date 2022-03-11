@@ -32,6 +32,12 @@ class GameManager {
         this.input.addKeys("d", () => this.slide("right"));
         this.input.addKeys("w", () => this.slide("up"));
         this.input.addKeys("s", () => this.slide("down"));
+
+        this.input.bind($(".delete-button"), "click", () => {
+            let game_container = $(".game-container")
+            game_container.addClass("fade")
+            setTimeout(() => game_container.remove(), 200)
+        });
     }
 
     slide(dir) {
@@ -263,6 +269,9 @@ class HTMLManager {
             $(grid_container).append(gridRow);
         }
 
+        let delete_button = $("<div>", { text: "×", class: "button delete-button" });
+        $(game_container).append(delete_button);
+
         $(game_container).append(grid_container);
         $(game_container).append(tile_container);
 
@@ -366,7 +375,7 @@ class InputManager {
     }
 
     bind(element, event, callback) {
-        element.addEventListener(event, callback);
+        element.on(event, callback);
     }
 }
 

@@ -1,4 +1,5 @@
 @import url(https://fontlibrary.org//face/clear-sans);
+@import url(https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css);
 @-webkit-keyframes pop {
   0% {
     -webkit-transform: scale(0);
@@ -57,7 +58,7 @@
 .game-container {
   -webkit-box-sizing: content-box;
           box-sizing: content-box;
-  margin: 0 auto;
+  margin: 15px auto;
   position: relative;
   padding: 7px;
   width: 221px;
@@ -69,12 +70,12 @@
 
 .grid-container {
   position: absolute;
-  z-index: 1;
+  z-index: 1000;
 }
 
 .tile-container {
   position: absolute;
-  z-index: 2;
+  z-index: 1001;
 }
 
 .grid-row {
@@ -89,6 +90,32 @@
 .grid-cell {
   float: left;
   background-color: rgba(238, 228, 218, 0.35);
+}
+
+.button {
+  font-family: "ClearSansBold", Arial, sans-serif;
+  position: absolute;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+.button:hover {
+  cursor: pointer;
+}
+
+.delete-button {
+  height: 20px;
+  width: 20px;
+  border-radius: 10px;
+  -webkit-transform: translate(218px, -15px);
+          transform: translate(218px, -15px);
+  background-color: #007bff;
+  text-align: center;
+  line-height: 16px;
+  color: #fff;
+  z-index: 1005;
 }
 
 /* 
@@ -130,7 +157,7 @@ with the background color and text.
 }
 
 .tile-merged .tile-text {
-  z-index: 5;
+  z-index: 1004;
   -webkit-animation-name: pop;
           animation-name: pop;
   -webkit-animation-duration: 200ms;
