@@ -232,11 +232,6 @@ class HTMLManager {
         // Wait for the window to be updated
         window.requestAnimationFrame(() => {
             $(".tile-container").empty(); // Removes all child nodes
-            console.log(grid.tiles[0]);
-            console.log(grid.tiles[1]);
-            console.log(grid.tiles[2]);
-            console.log(grid.tiles[3]);
-            console.log("---");
 
             grid.tiles.forEach((column) => {
                 column.forEach((tile) => {
