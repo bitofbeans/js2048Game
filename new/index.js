@@ -53,7 +53,7 @@ class GameManager {
                 break;
         }
 
-        this.grid.forEachTile(() => {
+        this.grid.forEachTile((row, col, tile) => {
             if (tile != null) {
                 tile.new = false; // Make sure tile doesn't animate like new tile
             }
