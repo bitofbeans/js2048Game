@@ -6,7 +6,7 @@ $grid-spacing: 7px;
 $tile-size: 50px;
 $z: 999;
 
-@keyframes pop {
+@keyframes pop-in {
     0% {
         transform: scale(0);
     }
@@ -17,6 +17,8 @@ $z: 999;
         transform: scale(1);
     }
 }
+
+
 
 @keyframes fade-in {
     0% {
@@ -93,6 +95,7 @@ $z: 999;
     color: #fff;
     z-index: $z + 6 ;
 }
+
 /* 
 Explanation for CSS:
 
@@ -131,7 +134,7 @@ with the background color and text.
 
 .tile-merged .tile-text {
     z-index: $z + 5;
-    animation-name: pop;
+    animation-name: pop-in;
     animation-duration: 200ms;
     animation-timing-function: ease;
     animation-delay: 100ms;

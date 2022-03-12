@@ -33,15 +33,18 @@ class GameManager {
         this.input.addKeys("w", () => this.slide("up"));
         this.input.addKeys("s", () => this.slide("down"));
 
-        let del_btn = document.querySelector(".delete-button");
-        this.input.bind(del_btn, "click", () => {});
+        let del_btn = document.getElementById("delete-button");
 
-        this.reset();
+        this.input.bind(del_btn, "click", () => {
+            let game_container = $(".game-container")
+            game_container.addClass("fade")
+            setTimeout(() => game_container.remove(), 200)
+        });
+
+        // this.input.removeListeners();
     }
 
-    reset() {
-        this.input.removeListeners();
-    }
+    restartGrid() {}
 
     slide(dir) {
         // Master slide function
@@ -272,7 +275,12 @@ class HTMLManager {
             $(grid_container).append(gridRow);
         }
 
-        let delete_button = $("<div>", { tabindex: "0", text: "×", class: "button delete-button" });
+        let delete_button = $("<div>", {
+            tabindex: "0",
+            text: "×",
+            class: "button delete-button",
+            id: "delete-button",
+        });
         $(game_container).append(delete_button);
 
         $(game_container).append(grid_container);
@@ -384,11 +392,8 @@ class InputManager {
     }
 
     bind(element, event, callback) {
-        const func = () => {
-            callback.call(this.gamemanager);
-        };
-        element.addEventListener(event, func);
-        this.addToListenerList("keydown", func, element);
+        element.addEventListener(event, callback);
+        this.addToListenerList(event, callback, element);
     }
 
     removeListeners(index = null) {
@@ -407,6 +412,7 @@ class InputManager {
             let location = entry[1][2];
 
             if (index == null || index == key) {
+                delete this.listeners[Number(key)];
                 location.removeEventListener(event, func);
             }
         });
@@ -539,4 +545,5 @@ class Tile {
 }
 
 $(".game-container").remove();
-var game = new GameManager(4);
+var game;
+game = new GameManager(4);
