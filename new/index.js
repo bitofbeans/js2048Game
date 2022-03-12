@@ -33,13 +33,10 @@ class GameManager {
         this.input.addKeys("w", () => this.slide("up"));
         this.input.addKeys("s", () => this.slide("down"));
 
-        this.input.bind($(".delete-button"), "click", () => {
-            let game_container = $(".game-container");
-            game_container.addClass("fade");
-            setTimeout(() => game_container.remove(), 200);
-        });
+        let del_btn = document.querySelector(".delete-button");
+        this.input.bind(del_btn, "click", () => {});
 
-        // this.reset();
+        this.reset();
     }
 
     reset() {
@@ -387,13 +384,14 @@ class InputManager {
     }
 
     bind(element, event, callback) {
-        element.on(event, callback);
-        this.addToListenerList("keydown", callback, element[0]);
-
+        const func = () => {
+            callback.call(this.gamemanager);
+        };
+        element.addEventListener(event, func);
+        this.addToListenerList("keydown", func, element);
     }
 
     removeListeners(index = null) {
-        console.log("tried");
         Object.entries(this.listeners).forEach((entry) => {
             // entry structure \/
             //    key = "1", "2"...
@@ -407,10 +405,10 @@ class InputManager {
             let event = entry[1][0];
             let func = entry[1][1];
             let location = entry[1][2];
+
             if (index == null || index == key) {
                 location.removeEventListener(event, func);
             }
-            console.log(location);
         });
     }
 }
