@@ -564,4 +564,7 @@ class Tile {
 }
 
 $(".game-container").remove();
-let game = new GameManager(4);
+var game;
+window.requestAnimationFrame(() => {
+    game = new GameManager(4);
+});

@@ -299,41 +299,109 @@ with the background color and text.
 }
 
 .tile-4 .tile-text {
-  background-color: #ede0c8;
+  background-color: #eee1c9;
 }
 
 .tile-8 .tile-text {
-  background-color: #f2b179;
+  background-color: #f3b27a;
+  color: #f9f6f2;
 }
 
 .tile-16 .tile-text {
-  background-color: #f59563;
+  background-color: #f69664;
+  color: #f9f6f2;
 }
 
 .tile-32 .tile-text {
-  background-color: #f67c5f;
+  background-color: #f77c5f;
+  color: #f9f6f2;
 }
 
 .tile-64 .tile-text {
-  background-color: #f65e3b;
+  background-color: #f75f3b;
+  color: #f9f6f2;
 }
 
 .tile-128 .tile-text {
-  background-color: #edcf72;
+  background-color: #edd073;
+  color: #f9f6f2;
 }
 
 .tile-256 .tile-text {
-  background-color: #edcc61;
+  background-color: #edcc5c;
+  color: #f9f6f2;
 }
 
 .tile-512 .tile-text {
-  background-color: #edc850;
+  background-color: #edc84b;
+  color: #f9f6f2;
 }
 
 .tile-1024 .tile-text {
-  background-color: #edc53f;
+  background-color: #edc539;
+  color: #f9f6f2;
+  font-size: 20px;
 }
 
 .tile-2048 .tile-text {
-  background-color: #edc22e;
+  background-color: #edc229;
+  color: #f9f6f2;
+  font-size: 20px;
 }
+
+.tile-4096 .tile-text {
+  background-color: #f74af7;
+  color: #f9f6f2;
+  font-size: 20px;
+}
+
+.tile-8192 .tile-text {
+  background-color: #c93be6;
+  color: #f9f6f2;
+  font-size: 20px;
+}
+
+.tile-16384 .tile-text {
+  background-color: #7744ee;
+  color: #f9f6f2;
+  font-size: 20px;
+  font-size: 16px;
+}
+
+.tile-32768 .tile-text {
+  background-color: #3e50ec;
+  color: #f9f6f2;
+  font-size: 20px;
+  font-size: 16px;
+}
+
+.tile-65536 .tile-text {
+  background-color: #3b77e6;
+  color: #f9f6f2;
+  font-size: 20px;
+  font-size: 16px;
+}
+
+/*
+while (game.grid.getAvailableTiles().length>0) {
+	game.grid.addRandomTileToGrid()
+}
+
+var number;
+number = 2
+game.grid.tiles.flat().forEach((tile)=>{
+  if (tile != null) {
+		if (number == 2) {
+		number = 4
+   	 tile.value = 4
+    } else {
+   	 tile.value = number
+        number *= 2
+    }
+				
+  }
+});
+
+game.html.update(game.grid)
+*/
+/*# sourceMappingURL=style.css.map */

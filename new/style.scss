@@ -179,20 +179,57 @@ with the background color and text.
 }
 
 // prettier-ignore
-$colors: rgb(238, 228, 218) 2,
-        rgb(237, 224, 200) 4,
-        rgb(242, 177, 121) 8,
-        rgb(245, 149, 99) 16,
-        rgb(246, 124, 95) 32,
-        rgb(246, 94, 59) 64,
-        rgb(237, 207, 114) 128,
-        rgb(237, 204, 97) 256,
-        rgb(237, 200, 80) 512,
-        rgb(237, 197, 63) 1024,
-        rgb(237, 194, 46) 2048;
+$colors:#eee4da 2,
+        #eee1c9 4,
+        #f3b27a 8,
+        #f69664 16,
+        #f77c5f 32,
+        #f75f3b 64,
+        #edd073 128,
+        #edcc5c 256,
+        #edc84b 512,
+        #edc539 1024,
+        #edc229 2048,
+        #f74af7 4096,
+        #c93be6 8192,
+        #7744ee 16384,
+        #3e50ec 32768,
+        #3b77e6 65536;
 
 @each $color, $number in $colors {
     .tile-#{$number} .tile-text {
         background-color: $color;
+        @if $number >= 8 {
+            color: #f9f6f2;
+        }
+        @if $number > 999 {
+            font-size: 20px;
+        } 
+        @if $number > 9999 {
+            font-size: 16px;
+        }
     }
 }
+
+/*
+while (game.grid.getAvailableTiles().length>0) {
+	game.grid.addRandomTileToGrid()
+}
+
+var number;
+number = 2
+game.grid.tiles.flat().forEach((tile)=>{
+  if (tile != null) {
+		if (number == 2) {
+		number = 4
+   	 tile.value = 4
+    } else {
+   	 tile.value = number
+        number *= 2
+    }
+				
+  }
+});
+
+game.html.update(game.grid)
+*/
