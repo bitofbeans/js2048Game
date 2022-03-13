@@ -103,8 +103,8 @@
 }
 
 .game-container {
-  -webkit-box-sizing: content-box;
-          box-sizing: content-box;
+  -webkit-box-sizing: content-box !important;
+          box-sizing: content-box !important;
   margin: 40px auto;
   position: relative;
   padding: 7px;

@@ -57,7 +57,7 @@ $z: 999;
 }
 
 .game-container {
-    box-sizing: content-box;
+    box-sizing: content-box !important;
     margin: 40px auto;
     position: relative;
     padding: 7px;

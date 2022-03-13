@@ -326,8 +326,12 @@ class HTMLManager {
 
         $(game_container).append(grid_container);
         $(game_container).append(tile_container);
+        
+        let container = $("<div>", {
+            class: "bootstrap"
+        }).append(game_container)
 
-        $(document.body).append(game_container);
+        $(document.body).append(container);
     }
 
     createElement(type, value = null, classes = null) {

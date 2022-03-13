@@ -17,8 +17,8 @@ var css = addElement("head", "link", {
 }); // Add CSS
 var bootstrap = addElement("head", "link", {
     rel: "stylesheet",
-    href: "https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css",
-}); // Add CSS
+    href: "https://bitofbeans.github.io/cssContainedBootstrap/4.6.1/bootstrap.min.css",
+}); // Add Bootstrap
 
 jQuery.onload = () =>
     addElement("body", "script", { src: "https://bitofbeans.github.io/js2048Game/new/index.js" });
