@@ -33,18 +33,31 @@ class GameManager {
         this.input.addKeys("w", () => this.slide("up"));
         this.input.addKeys("s", () => this.slide("down"));
 
-        let del_btn = document.getElementById("delete-button");
-
+        let del_btn = document.querySelector(".delete-button");
         this.input.bind(del_btn, "click", () => {
-            let game_container = $(".game-container")
-            game_container.addClass("fade")
-            setTimeout(() => game_container.remove(), 200)
+            let game_container = $(".game-container");
+            game_container.addClass("fade");
+            this.input.removeListeners(); // remove any trace of the game
+            setTimeout(() => game_container.remove(), 200);
         });
 
-        // this.input.removeListeners();
+        let reset_btn = document.querySelector(".reset-button");
+        this.input.bind(reset_btn, "click", () => {
+            this.restartGrid();
+        });
     }
 
-    restartGrid() {}
+    restartGrid() {
+        this.grid = new Grid(this.size);
+        this.gameover = false;
+        this.win = false;
+        this.score = 0;
+
+        this.grid.addRandomTileToGrid();
+        this.grid.addRandomTileToGrid();
+
+        this.html.update(this.grid);
+    }
 
     slide(dir) {
         // Master slide function
@@ -275,12 +288,18 @@ class HTMLManager {
             $(grid_container).append(gridRow);
         }
 
+        let reset_button = $("<div>", {
+            tabindex: "0",
+            class: "button reset-button",
+            text: "⟳",
+        });
         let delete_button = $("<div>", {
             tabindex: "0",
             text: "×",
             class: "button delete-button",
-            id: "delete-button",
         });
+
+        $(game_container).append(reset_button);
         $(game_container).append(delete_button);
 
         $(game_container).append(grid_container);
@@ -545,5 +564,4 @@ class Tile {
 }
 
 $(".game-container").remove();
-var game;
-game = new GameManager(4);
+let game = new GameManager(4);

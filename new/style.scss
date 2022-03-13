@@ -18,8 +18,6 @@ $z: 999;
     }
 }
 
-
-
 @keyframes fade-in {
     0% {
         opacity: 0;
@@ -80,7 +78,7 @@ $z: 999;
         cursor: pointer;
     }
     &:focus {
-        box-shadow: 0 0 3px rgb(0, 0, 0)
+        box-shadow: 0 0 3px rgb(0, 0, 0);
     }
 }
 
@@ -88,12 +86,25 @@ $z: 999;
     height: 20px;
     width: 20px;
     border-radius: 10px;
-    transform: translate($grid-size - 3, - 15px);
+    transform: translate($grid-size - 3, -15px);
     background-color: #007bff;
     text-align: center;
     line-height: 16px;
     color: #fff;
-    z-index: $z + 6 ;
+    z-index: $z + 6;
+}
+
+.reset-button {
+    height: 20px;
+    width: 20px;
+    z-index: $z + 6;
+    background-color: #dc3545;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 16px;
+    color: #fff;
+    font-size: 17px;
+    transform: translate(-15px, -15px);
 }
 
 /* 
