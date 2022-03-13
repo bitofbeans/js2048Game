@@ -59,6 +59,13 @@ class GameManager {
         this.html.update(this.grid);
     }
 
+    changeScore(add) {
+        this.score += add;
+        $(".score-container").addClass("bounce");
+        setTimeout(() => $(".score-text").text(this.score), 90);
+        setTimeout(() => $(".score-container").removeClass("bounce"), 200);
+    }
+
     slide(dir) {
         // Master slide function
         let oldGrid = this.grid.stringify();
@@ -119,6 +126,7 @@ class GameManager {
 
                         let merged = new Tile(row[nextIndex].getPos(), row[j].value * 2);
                         merged.merge(row[j], row[nextIndex]);
+                        this.changeScore(merged.value);
                         // Modify row
                         row[nextIndex] = merged;
                         // Modify grid
@@ -156,6 +164,8 @@ class GameManager {
 
                         let merged = new Tile(row[nextIndex].getPos(), row[j].value * 2);
                         merged.merge(row[j], row[nextIndex]);
+                        this.changeScore(merged.value);
+
                         // Modify row
                         row[nextIndex] = merged;
                         // Modify grid
@@ -195,6 +205,7 @@ class GameManager {
 
                         let merged = new Tile(row[nextIndex].getPos(), row[j].value * 2);
                         merged.merge(row[j], row[nextIndex]);
+                        this.changeScore(merged.value);
                         // Modify row
                         row[nextIndex] = merged;
                         // Modify grid
@@ -234,6 +245,7 @@ class GameManager {
 
                         let merged = new Tile(row[nextIndex].getPos(), row[j].value * 2);
                         merged.merge(row[j], row[nextIndex]);
+                        this.changeScore(merged.value);
                         // Modify row
                         row[nextIndex] = merged;
                         // Modify grid
@@ -299,8 +311,18 @@ class HTMLManager {
             class: "button delete-button",
         });
 
+        let score_container = $("<div>", {
+            class: "score-container",
+        }).append(
+            $("<div>", {
+                class: "score-text",
+                text: "0",
+            })
+        );
+
         $(game_container).append(reset_button);
         $(game_container).append(delete_button);
+        $(game_container).append(score_container);
 
         $(game_container).append(grid_container);
         $(game_container).append(tile_container);

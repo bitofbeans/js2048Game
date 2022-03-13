@@ -18,6 +18,27 @@ $z: 999;
     }
 }
 
+@keyframes bounce {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    25% {
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.75);
+        opacity: 0;
+    }
+    75% {
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
 @keyframes fade-in {
     0% {
         opacity: 0;
@@ -37,14 +58,14 @@ $z: 999;
 
 .game-container {
     box-sizing: content-box;
-    margin: 15px auto;
+    margin: 40px auto;
     position: relative;
     padding: 7px;
     width: $grid-size;
     height: $grid-size;
     border-radius: 3px;
     background-color: #bbada0;
-    display: block;
+    z-index: $z;
 }
 
 .grid-container {
@@ -107,6 +128,32 @@ $z: 999;
     transform: translate(-15px, -15px);
 }
 
+.score-container {
+    position: relative;
+    font-family: "ClearSansBold", Arial, sans-serif;
+    font-size: 18px;
+    padding: 0px 10px 2px 10px; // top, right, bottom, left
+    background-color: #bbada0;
+    width: 60%;
+    justify-content: center;
+    margin: -40px 20% 0 20%;
+    border-radius: 3px;
+    color: white;
+    display: flex;
+    float: left;
+    user-select: none;
+    &::before {
+        white-space: pre; // Preserve extra spaces
+        content: "SCORE:  ";
+        color: #eee4da;
+    }
+}
+
+.bounce .score-text {
+    animation-name: bounce;
+    animation-duration: 200ms;
+    animation-timing-function: ease-in-out;
+}
 /* 
 Explanation for CSS:
 
@@ -204,7 +251,7 @@ $colors:#eee4da 2,
         }
         @if $number > 999 {
             font-size: 20px;
-        } 
+        }
         @if $number > 9999 {
             font-size: 16px;
         }

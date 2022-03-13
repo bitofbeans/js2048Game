@@ -28,6 +28,54 @@
   }
 }
 
+@-webkit-keyframes bounce {
+  0% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    opacity: 1;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    -webkit-transform: scale(1.75);
+            transform: scale(1.75);
+    opacity: 0;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    opacity: 1;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    -webkit-transform: scale(1.75);
+            transform: scale(1.75);
+    opacity: 0;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    opacity: 1;
+  }
+}
+
 @-webkit-keyframes fade-in {
   0% {
     opacity: 0;
@@ -57,14 +105,14 @@
 .game-container {
   -webkit-box-sizing: content-box;
           box-sizing: content-box;
-  margin: 15px auto;
+  margin: 40px auto;
   position: relative;
   padding: 7px;
   width: 221px;
   height: 221px;
   border-radius: 3px;
   background-color: #bbada0;
-  display: block;
+  z-index: 999;
 }
 
 .grid-container {
@@ -134,6 +182,44 @@
   font-size: 17px;
   -webkit-transform: translate(-15px, -15px);
           transform: translate(-15px, -15px);
+}
+
+.score-container {
+  position: relative;
+  font-family: "ClearSansBold", Arial, sans-serif;
+  font-size: 18px;
+  padding: 0px 10px 2px 10px;
+  background-color: #bbada0;
+  width: 60%;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  margin: -40px 20% 0 20%;
+  border-radius: 3px;
+  color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  float: left;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+.score-container::before {
+  white-space: pre;
+  content: "SCORE:  ";
+  color: #eee4da;
+}
+
+.bounce .score-text {
+  -webkit-animation-name: bounce;
+          animation-name: bounce;
+  -webkit-animation-duration: 200ms;
+          animation-duration: 200ms;
+  -webkit-animation-timing-function: ease-in-out;
+          animation-timing-function: ease-in-out;
 }
 
 /* 
@@ -381,3 +467,27 @@ with the background color and text.
   font-size: 20px;
   font-size: 16px;
 }
+
+/*
+while (game.grid.getAvailableTiles().length>0) {
+	game.grid.addRandomTileToGrid()
+}
+
+var number;
+number = 2
+game.grid.tiles.flat().forEach((tile)=>{
+  if (tile != null) {
+		if (number == 2) {
+		number = 4
+   	 tile.value = 4
+    } else {
+   	 tile.value = number
+        number *= 2
+    }
+				
+  }
+});
+
+game.html.update(game.grid)
+*/
+/*# sourceMappingURL=style.css.map */
