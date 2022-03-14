@@ -43,7 +43,10 @@ var game; // for debugging
                 let game_container = $(".game-container");
                 game_container.addClass("fade");
                 this.input.removeListeners(); // remove any trace of the game
-                setTimeout(() => game_container.remove(), 200);
+                setTimeout(() => {
+                    game_container.remove();
+                    $("div.bootstrap").remove();
+                }, 200);
             });
 
             let reset_btn = document.querySelector(".reset-button");
@@ -60,7 +63,7 @@ var game; // for debugging
             this.grid = new Grid(this.size);
             this.gameover = false;
             this.win = false;
-            this.changeScore(-this.score) // set score back to 0
+            this.changeScore(-this.score); // set score back to 0
 
             this.grid.addRandomTileToGrid();
             this.grid.addRandomTileToGrid();
@@ -313,7 +316,7 @@ var game; // for debugging
             // Game container will contain grid and tile containers
             // Grid container will contain rows of tiles
             // Tile container will contain tiles that are visible on screen
-            $("div.bootstrap").remove()
+            $("div.bootstrap").remove();
             let game_container = $("<div>", { class: "game-container" });
             let grid_container = $("<div>", { class: "grid-container" });
             let tile_container = $("<div>", { class: "tile-container" });
@@ -679,7 +682,7 @@ var game; // for debugging
     }
 
     $(".game-container").remove();
-    $("div.bootstrap").remove()
+    $("div.bootstrap").remove();
     window.requestAnimationFrame(() => {
         game = new GameManager(4);
     });
