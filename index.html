@@ -10,49 +10,91 @@
             integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn"
             crossorigin="anonymous"
         />
-        <title>2048 Clone</title>
+        <title>2048 Clone &mdash; bitofbeans</title>
         <style>
-            .container {
-                margin-left: 25%;
-                margin-right: 25%;
+            body {
+                display: flex;
+                flex-direction: column;
+                height: calc(100vh - 50px);
                 margin-top: 50px;
+                color: #d3d3d3;
+                background-color: #1a1a1b;
+                font-size: large;
+            }
+            footer {
+                margin-top: auto;
             }
         </style>
     </head>
     <body>
         <div class="container">
-            <div class="page-header">
-                <h1>2048 Clone</h1>
-            </div>
+            <!-- Header -->
+            <header>
+                <div class="page-header">
+                    <h1>2048 Clone</h1>
+                </div>
+                <hr />
+            </header>
 
-            <hr />
+            <!-- Content -->
+            <article>
+                <p>
+                    2048 game made as a bookmarklet
+                    <br />
+                    <br />
+                    To play, press this button:  
+                    <button
+                        onclick="javascript:x=document.createElement('script');x.src='https://bitofbeans.github.io/js2048Game/new/script.js',void document.getElementsByTagName('head')[0].appendChild(x);"
+                        class="btn btn-primary"
+                    >
+                        Play Game
+                    </button>
+                    <br>
+                    <br>
+                    Or, to use it anywhere, drag
+                    <a
+                        href='javascript:x=document.createElement("script");x.src="https://bitofbeans.github.io/js2048Game/new/script.js",void document.getElementsByTagName("head")[0].appendChild(x);'
+                        >this</a
+                    >
+                    link into your bookmarks bar.
+                    <br />
+                    Then, on any website, (even this one!) click on the bookmark.
+                    <br />
+                    You should be able to see the game at the bottom of that page.
+                    <br />
+                    <br />
 
-            <p>
-                2048 game clone made to be injected into any website
-                <br />
-                <br />
-                Save
-                <a
-                    href='javascript:x=document.createElement("script");x.src="https://bitofbeans.github.io/js2048Game/new/script.js",void document.getElementsByTagName("head")[0].appendChild(x);'
-                    >this</a
-                >
-
-                as a bookmark and click it on any website to inject it
-                <br />
-                <br />
-
-                Links:
-                <br />
-                <a href="https://bitofbeans.github.io/js2048Game/new/"> GitHub Page with Game</a>
-                <br />
-                <a href="https://bitofbeans.github.io/js2048Game/new/script.js">
-                    Raw Injection Code
-                </a>
-                <br />
-                <a href="https://bitofbeans.github.io/js2048Game/new/index.js"> Raw Script Code</a>
-                <br />
-                <a href="https://bitofbeans.github.io/js2048Game/new/style.css"> Raw Stylesheet</a>
-            </p>
+                    Links below:
+                    <br />
+                    <a href="https://bitofbeans.github.io/js2048Game/new/">
+                        Seperate GitHub page with game</a
+                    >
+                    <br>
+                    <a href="https://bitofbeans.github.io/js2048Game/new/script.js">
+                        Raw Injection Code
+                    </a>
+                    <br />
+                    <a href="https://bitofbeans.github.io/js2048Game/new/index.js">
+                        Raw Script Code</a
+                    >
+                    <br />
+                    <a href="https://bitofbeans.github.io/js2048Game/new/style.css">
+                        Raw Stylesheet</a
+                    >
+                </p>
+            </article>
         </div>
+        <!-- Footer -->
+        <footer>
+            <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">
+                Created by bitofbeans on GitHub
+            </div>
+        </footer>
+        <!------------>
     </body>
 </html>
+
+<!-- .desc { margin-left: 10%; margin-right: 10%; font-size: large; } .font-large { font-size: large; }
+.project { padding: 10px 0px; margin-bottom: 50px; border-radius: 15px; width: auto;
+background-color: #202020; }
+ -->
