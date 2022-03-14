@@ -475,26 +475,3 @@ with the background color and text.
   font-size: 16px;
 }
 
-/*
-while (game.grid.getAvailableTiles().length>0) {
-	game.grid.addRandomTileToGrid()
-}
-
-var number;
-number = 2
-game.grid.tiles.flat().forEach((tile)=>{
-  if (tile != null) {
-		if (number == 2) {
-		number = 4
-   	 tile.value = 4
-    } else {
-   	 tile.value = number
-        number *= 2
-    }
-				
-  }
-});
-
-game.html.update(game.grid)
-*/
-/*# sourceMappingURL=style.css.map */
