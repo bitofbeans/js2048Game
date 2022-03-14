@@ -1,5 +1,5 @@
 "use strict";
-var game;
+var game; // for debugging
 (function () {
     class GameManager {
         constructor(size) {
@@ -313,6 +313,7 @@ var game;
             // Game container will contain grid and tile containers
             // Grid container will contain rows of tiles
             // Tile container will contain tiles that are visible on screen
+            $("div.bootstrap").remove()
             let game_container = $("<div>", { class: "game-container" });
             let grid_container = $("<div>", { class: "grid-container" });
             let tile_container = $("<div>", { class: "tile-container" });
@@ -678,6 +679,7 @@ var game;
     }
 
     $(".game-container").remove();
+    $("div.bootstrap").remove()
     window.requestAnimationFrame(() => {
         game = new GameManager(4);
     });

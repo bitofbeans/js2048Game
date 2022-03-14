@@ -9,6 +9,7 @@ function addElement(location, type, values) {
 
 var jQuery = addElement("body", "script", {
     src: "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js",
+    id: "jquery",
 }); // Add jquery
 
 var css = addElement("head", "link", { rel: "stylesheet", href: "./style.css" }); // Add CSS
@@ -17,4 +18,12 @@ var bootstrap = addElement("head", "link", {
     href: "https://bitofbeans.github.io/cssContainedBootstrap/4.6.1/bootstrap.min.css",
 }); // Add Bootstrap
 
-jQuery.onload = () => addElement("body", "script", { src: "./index.js" });
+jQuery.onload = () => {
+    let script = addElement("body", "script", { src: "./index.js", id: "index" });
+    script.onload = () => {
+        // Remove injection scripts
+        document.querySelector("#script").remove();
+        document.querySelector("#index").remove();
+        document.querySelector("#jquery").remove();
+    };
+};
