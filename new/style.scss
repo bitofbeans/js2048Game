@@ -39,7 +39,17 @@ $z: 999;
     }
 }
 
+
 @keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes tile-appear {
     0% {
         opacity: 0;
         transform: scale(0);
@@ -55,9 +65,10 @@ $z: 999;
     -ms-transform: $args;
     transform: $args;
 }
-
-.game-container {
+div.bootstrap * {
     box-sizing: content-box !important;
+}
+.game-container {
     margin: 40px auto;
     position: relative;
     padding: 7px;
@@ -118,15 +129,25 @@ $z: 999;
 .reset-button {
     height: 20px;
     width: 20px;
-    z-index: $z + 6;
-    background-color: #dc3545;
     border-radius: 10px;
+    transform: translate(-15px, -15px);
+    background-color: #dc3545;
     text-align: center;
     line-height: 16px;
     color: #fff;
-    font-size: 17px;
-    transform: translate(-15px, -15px);
+    z-index: $z + 6;
 }
+
+.main-reset-button {
+    @extend .reset-button;
+    transform: none;
+    margin-top: 35%;
+    line-height: 26px;
+    font-size: 2rem;
+    height: 30px;
+    width: 75px;
+}
+
 
 .score-container {
     position: relative;
@@ -158,6 +179,38 @@ $z: 999;
 .score-text {
     user-select: text;
 }
+
+.game-message {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: $grid-size;
+    height: $grid-size;
+    justify-content: center;
+    align-items: center;
+    border-radius: 3px;
+    background-color: rgba(238, 228, 218, 0.73);
+    padding: 7px;
+    z-index: $z + 5;
+}
+.game-message.game-over {
+    display: flex;
+    animation: fade-in 500ms linear 0.7s;
+    animation-fill-mode: backwards;
+}
+.game-message.game-over p {
+    font-family: "ClearSansBold", Arial, sans-serif;
+    margin-bottom: 25%;
+    color: #776e65;
+    font-size: 2rem;
+    z-index: $z + 11;
+    display: block;
+    position: relative;
+    &::before {
+        content: "Game Over!";
+    }
+}
 /* 
 Explanation for CSS:
 
@@ -188,10 +241,11 @@ with the background color and text.
 
 .tile-text {
     font-family: "ClearSansBold", Arial, sans-serif;
-    font-size: 25px;
+    font-size: 8px; // default font size, see below for selective sizes
     color: #776e65;
     text-align: center;
     line-height: $tile-size;
+    background: red // default color, see below for specific colors
 }
 
 .tile-merged .tile-text {
@@ -204,7 +258,7 @@ with the background color and text.
 }
 
 .tile-new .tile-text {
-    animation-name: fade-in;
+    animation-name: tile-appear;
     animation-duration: 200ms;
     animation-timing-function: ease;
     animation-delay: 100ms;
@@ -245,7 +299,8 @@ $colors:#eee4da 2,
         #c93be6 8192,
         #7744ee 16384,
         #3e50ec 32768,
-        #3b77e6 65536;
+        #3b77e6 65536,
+        #3bbee6 131072;
 
 @each $color, $number in $colors {
     .tile-#{$number} .tile-text {
@@ -253,34 +308,21 @@ $colors:#eee4da 2,
         @if $number >= 8 {
             color: #f9f6f2;
         }
+        @if $number < 99 {
+            font-size: 30px;
+        }
+        @if $number > 99 {
+            font-size: 25px;
+        }
         @if $number > 999 {
-            font-size: 20px;
+            font-size: 18px;
         }
         @if $number > 9999 {
             font-size: 16px;
         }
+        @if $number > 99999 {
+            font-size: 12px;
+        }
+
     }
 }
-
-/*
-while (game.grid.getAvailableTiles().length>0) {
-	game.grid.addRandomTileToGrid()
-}
-
-var number;
-number = 2
-game.grid.tiles.flat().forEach((tile)=>{
-  if (tile != null) {
-		if (number == 2) {
-		number = 4
-   	 tile.value = 4
-    } else {
-   	 tile.value = number
-        number *= 2
-    }
-				
-  }
-});
-
-game.html.update(game.grid)
-*/

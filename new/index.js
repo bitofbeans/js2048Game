@@ -1,4 +1,5 @@
 "use strict";
+var game;
 (function () {
     class GameManager {
         constructor(size) {
@@ -22,7 +23,10 @@
             this.grid.addRandomTileToGrid();
             this.grid.addRandomTileToGrid();
 
-            this.html.update(this.grid);
+            this.html.update(this.grid, {
+                gameover: this.gameover,
+                win: this.win,
+            });
 
             // Bind key events
             this.input.addKeys("ArrowLeft", () => this.slide("left"));
@@ -43,7 +47,11 @@
             });
 
             let reset_btn = document.querySelector(".reset-button");
+            let main_reset_btn = document.querySelector(".main-reset-button");
             this.input.bind(reset_btn, "click", () => {
+                this.restartGrid();
+            });
+            this.input.bind(main_reset_btn, "click", () => {
                 this.restartGrid();
             });
         }
@@ -52,12 +60,15 @@
             this.grid = new Grid(this.size);
             this.gameover = false;
             this.win = false;
-            this.score = 0;
+            this.changeScore(-this.score) // set score back to 0
 
             this.grid.addRandomTileToGrid();
             this.grid.addRandomTileToGrid();
 
-            this.html.update(this.grid);
+            this.html.update(this.grid, {
+                gameover: this.gameover,
+                win: this.win,
+            });
         }
 
         changeScore(add) {
@@ -68,6 +79,9 @@
         }
 
         slide(dir) {
+            if (this.gameover) {
+                return;
+            }
             // Master slide function
             let oldGrid = this.grid.stringify();
 
@@ -97,7 +111,15 @@
                 this.grid.addRandomTileToGrid();
             }
 
-            this.html.update(this.grid); // Update html (screen)
+            if (!this.grid.checkMovesAvailable()) {
+                // No more moves
+                this.gameover = true;
+            }
+
+            this.html.update(this.grid, {
+                gameover: this.gameover,
+                win: this.win,
+            }); // Update html (screen)
         }
 
         slideLeft() {
@@ -263,10 +285,9 @@
     }
 
     class HTMLManager {
-        update(grid) {
+        update(grid, environment) {
             // We are going to be deleting the tiles and readding them seamlessly
             // so we don't have to track the tile elements long term
-
             // Wait for the window to be updated
             window.requestAnimationFrame(() => {
                 $(".tile-container").empty(); // Removes all child nodes
@@ -279,7 +300,11 @@
                         }
                     });
                 });
-
+                if (environment.gameover) {
+                    $(".game-message").addClass("game-over");
+                } else {
+                    $(".game-message").removeClass("game-over");
+                }
                 grid.resetTiles();
             });
         }
@@ -320,7 +345,18 @@
                     text: "0",
                 })
             );
+            let game_message = $("<div>", {
+                class: "game-message",
+            }).append(
+                $("<p>"),
+                $("<div>", {
+                    tabindex: "0",
+                    class: "button main-reset-button",
+                    text: "⟳",
+                })
+            );
 
+            $(game_container).append(game_message);
             $(game_container).append(reset_button);
             $(game_container).append(delete_button);
             $(game_container).append(score_container);
@@ -522,6 +558,10 @@
             return tile;
         }
 
+        getTile(position) {
+            return this.tiles[position.row][position.col];
+        }
+
         insertTile(tile) {
             this.tiles[tile.row][tile.col] = tile;
         }
@@ -551,6 +591,32 @@
                 string = string.concat(value);
             });
             return string;
+        }
+
+        checkAvailableTileMatches() {
+            // Repeat over each tile in the grid
+            for (let row = 0; row < this.size; row++) {
+                for (let col = 0; col < this.size; col++) {
+                    let tile = this.tiles[row][col];
+                    // if the tile is an actual tile
+                    if (tile != null) {
+                        let neighbors = tile.getNeighbors();
+
+                        for (let i = 0; i < neighbors.length; i++) {
+                            let neighbor = this.getTile(neighbors[i]);
+                            if (neighbor != null && neighbor.value == tile.value) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        checkMovesAvailable() {
+            // "!!" == Bool()
+            return !!this.getAvailableTiles().length || this.checkAvailableTileMatches();
         }
     }
 
@@ -592,10 +658,26 @@
                 return false;
             }
         }
+
+        getNeighbors() {
+            let neighbors = [];
+            if (this.row > 0) {
+                neighbors.push({ row: this.row - 1, col: this.col });
+            }
+            if (this.row < 3) {
+                neighbors.push({ row: this.row + 1, col: this.col });
+            }
+            if (this.col > 0) {
+                neighbors.push({ row: this.row, col: this.col - 1 });
+            }
+            if (this.col < 3) {
+                neighbors.push({ row: this.row, col: this.col + 1 });
+            }
+            return neighbors;
+        }
     }
 
     $(".game-container").remove();
-    var game;
     window.requestAnimationFrame(() => {
         game = new GameManager(4);
     });
