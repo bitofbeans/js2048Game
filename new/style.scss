@@ -154,6 +154,10 @@ $z: 999;
     animation-duration: 200ms;
     animation-timing-function: ease-in-out;
 }
+
+.score-text {
+    user-select: text;
+}
 /* 
 Explanation for CSS:
 
