@@ -125,6 +125,26 @@ var game; // for debugging
             }); // Update html (screen)
         }
 
+        mergeTiles(tileCur, tileNext, dirRow, dirCol) {
+            // Move tile coordinates
+            let oldPos = tileCur.getPos();
+            tileCur.move({ row: tileCur.row + dirRow, col: tileCur.col + dirCol });
+
+            // Create new tile from merged tiles
+            let merged = new Tile(tileNext.getPos(), tileCur.value * 2);
+            merged.merge(tileCur, tileNext);
+
+            this.changeScore(merged.value);
+            // Modify row
+            tileCur = null;
+            tileNext = merged;
+            // Modify grid
+            this.grid.insertTile(merged);
+            this.grid.removeTile(oldPos);
+
+            return [tileCur, tileNext];
+        }
+
         slideLeft() {
             for (let rowIndex = 0; rowIndex < 4; rowIndex++) {
                 let row = this.grid.tiles[rowIndex];
@@ -143,24 +163,21 @@ var game; // for debugging
                             this.grid.insertTile(row[j]);
                             this.grid.removeTile(tilePos);
                         } else if (
-                            row[nextIndex].value == row[j].value &&
+                            row[nextIndex].value == row[j].value && 
                             row[nextIndex].mergedWith == null &&
                             row[j].mergedWith == null
                         ) {
-                            // Move tile coordinates
-                            row[j].move({ row: row[j].row, col: row[j].col - 1 });
-
-                            let merged = new Tile(row[nextIndex].getPos(), row[j].value * 2);
-                            merged.merge(row[j], row[nextIndex]);
-                            this.changeScore(merged.value);
-                            // Modify row
-                            row[nextIndex] = merged;
-                            // Modify grid
-                            this.grid.insertTile(merged);
-                            this.grid.removeTile(tilePos);
+                            // if same value, Merge Tiles
+                            [row[j], row[nextIndex]] = this.mergeTiles(
+                                row[j], // tile current
+                                row[nextIndex], // tile next
+                                0, // dir-row
+                                -1 // dir-col
+                            );
                         }
                     }
                 }
+                // After tiles have been slided in row,
                 this.grid.tiles[rowIndex] = row;
             }
         }
@@ -185,18 +202,13 @@ var game; // for debugging
                             row[nextIndex].mergedWith == null &&
                             row[j].mergedWith == null
                         ) {
-                            // Move tile coordinates
-                            row[j].move({ row: row[j].row, col: row[j].col + 1 });
-
-                            let merged = new Tile(row[nextIndex].getPos(), row[j].value * 2);
-                            merged.merge(row[j], row[nextIndex]);
-                            this.changeScore(merged.value);
-
-                            // Modify row
-                            row[nextIndex] = merged;
-                            // Modify grid
-                            this.grid.insertTile(merged);
-                            this.grid.removeTile(tilePos);
+                            // if same value, Merge Tiles
+                            [row[j], row[nextIndex]] = this.mergeTiles(
+                                row[j], // tile current
+                                row[nextIndex], // tile next
+                                0, // dir-row
+                                1 // dir-col
+                            );
                         }
                     }
                 }
@@ -226,17 +238,13 @@ var game; // for debugging
                             row[nextIndex].mergedWith == null &&
                             row[j].mergedWith == null
                         ) {
-                            // Move tile coordinates
-                            row[j].move({ row: row[j].row - 1, col: row[j].col });
-
-                            let merged = new Tile(row[nextIndex].getPos(), row[j].value * 2);
-                            merged.merge(row[j], row[nextIndex]);
-                            this.changeScore(merged.value);
-                            // Modify row
-                            row[nextIndex] = merged;
-                            // Modify grid
-                            this.grid.insertTile(merged);
-                            this.grid.removeTile(tilePos);
+                            // if same value, Merge Tiles
+                            [row[j], row[nextIndex]] = this.mergeTiles(
+                                row[j], // tile current
+                                row[nextIndex], // tile next
+                                -1, // dir-row
+                                0 // dir-col
+                            );
                         }
                         // getCol() returns a copy of the column, so we need to re-get the column
                         // to avoid issues
@@ -266,17 +274,13 @@ var game; // for debugging
                             row[nextIndex].mergedWith == null &&
                             row[j].mergedWith == null
                         ) {
-                            // Move tile coordinates
-                            row[j].move({ row: row[j].row + 1, col: row[j].col });
-
-                            let merged = new Tile(row[nextIndex].getPos(), row[j].value * 2);
-                            merged.merge(row[j], row[nextIndex]);
-                            this.changeScore(merged.value);
-                            // Modify row
-                            row[nextIndex] = merged;
-                            // Modify grid
-                            this.grid.insertTile(merged);
-                            this.grid.removeTile(tilePos);
+                            // if same value, Merge Tiles
+                            [row[j], row[nextIndex]] = this.mergeTiles(
+                                row[j], // tile current
+                                row[nextIndex], // tile next
+                                1, // dir-row
+                                0 // dir-col
+                            );
                         }
                         // getCol() returns a copy of the column, so we need to re-get the column
                         // to avoid issues
