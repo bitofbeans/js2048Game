@@ -360,7 +360,7 @@ body {
 `;
 document.head.appendChild(css);
 
-let game = create_grid();
+create_grid();
 var grid = [
     [new Tile(0, 0), new Tile(0, 1), new Tile(0, 2), new Tile(0, 3)],
     [new Tile(1, 0), new Tile(1, 1), new Tile(1, 2), new Tile(1, 3)],

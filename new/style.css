@@ -218,13 +218,13 @@ div.bootstrap * {
   position: relative;
   font-family: "ClearSansBold", Arial, sans-serif;
   font-size: 18px;
-  padding: 0px 10px 2px 10px;
+  padding: 0 10px 2px;
   background-color: #bbada0;
   width: 60%;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  margin: -40px 20% 0 20%;
+  margin: -40px 20% 0;
   border-radius: 3px;
   color: white;
   display: -webkit-box;
@@ -324,7 +324,7 @@ with the background color and text.
 .grid-cell:last-child,
 .tile:last-child,
 .tile-text:last-child {
-  margin-right: 0px;
+  margin-right: 0;
 }
 
 .tile,

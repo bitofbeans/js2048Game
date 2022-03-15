@@ -10,13 +10,13 @@ function addElement(location, type, values) {
 var jQuery = addElement("body", "script", {
     src: "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js",
     id: "jquery",
-}); // Add jquery
+});
 
-var css = addElement("head", "link", {
+addElement("head", "link", {
     rel: "stylesheet",
     href: "https://bitofbeans.github.io/js2048Game/new/style.css",
 }); // Add CSS
-var bootstrap = addElement("head", "link", {
+addElement("head", "link", {
     rel: "stylesheet",
     href: "https://bitofbeans.github.io/cssContainedBootstrap/4.6.1/bootstrap.min.css",
 }); // Add Bootstrap
