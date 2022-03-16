@@ -39,7 +39,6 @@ $z: 999;
     }
 }
 
-
 @keyframes fade-in {
     0% {
         opacity: 0;
@@ -140,14 +139,26 @@ div.bootstrap * {
 
 .main-reset-button {
     @extend .reset-button;
+    position: relative;
     transform: none;
-    margin-top: 35%;
+    margin-top: 5%;
     line-height: 26px;
     font-size: 2rem;
     height: 30px;
     width: 75px;
 }
 
+.main-continue-button {
+    @extend .reset-button;
+    position: relative;
+    background-color: #6f42c1;
+    transform: none;
+    margin-top: 5%;
+    line-height: 26px;
+    font-size: 1.2rem;
+    height: 30px;
+    width: 75px;
+}
 
 .score-container {
     position: relative;
@@ -194,12 +205,14 @@ div.bootstrap * {
     padding: 7px;
     z-index: $z + 5;
 }
-.game-message.game-over {
+.game-message.game-over,
+.game-message.game-win {
     display: flex;
+    flex-direction: column;
     animation: fade-in 500ms linear 0.7s;
     animation-fill-mode: backwards;
 }
-.game-message.game-over p {
+.game-message p {
     font-family: "ClearSansBold", Arial, sans-serif;
     margin-bottom: 25%;
     color: #776e65;
@@ -207,9 +220,19 @@ div.bootstrap * {
     z-index: $z + 11;
     display: block;
     position: relative;
+}
+.game-message.game-over p {
     &::before {
         content: "Game Over!";
     }
+}
+.game-message.game-win p {
+    &::before {
+        content: "You Won!";
+    }
+}
+.game-message.game-over .main-continue-button {
+    display: none;
 }
 /* 
 Explanation for CSS:
@@ -245,7 +268,7 @@ with the background color and text.
     color: #776e65;
     text-align: center;
     line-height: $tile-size;
-    background: red // default color, see below for specific colors
+    background: red; // default color, see below for specific colors
 }
 
 .tile-merged .tile-text {
@@ -323,6 +346,5 @@ $colors:#eee4da 2,
         @if $number > 99999 {
             font-size: 12px;
         }
-
     }
 }

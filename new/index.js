@@ -17,6 +17,7 @@ var game; // for debugging
             this.grid = new Grid(this.size);
             this.gameover = false;
             this.win = false;
+            this.firstWin = false
             this.score = 0;
 
             // Add to grid
@@ -37,6 +38,20 @@ var game; // for debugging
             this.input.addKeys("d", () => this.slide("right"));
             this.input.addKeys("w", () => this.slide("up"));
             this.input.addKeys("s", () => this.slide("down"));
+            this.input.addKeys(" ", () => {
+                this.win = true
+                this.firstWin = true
+                this.grid.forEachTile((row, col, tile) => {
+                    if (tile != null) {
+                        tile.new = false; // Make sure tile doesn't animate like new tile
+                    }
+                });
+
+                this.html.update(this.grid, {
+                    gameover: this.gameover,
+                    win: this.win,
+                });
+            });
 
             let del_btn = document.querySelector(".delete-button");
             this.input.bind(del_btn, "click", () => {
@@ -56,6 +71,16 @@ var game; // for debugging
             });
             this.input.bind(main_reset_btn, "click", () => {
                 this.restartGrid();
+            });
+
+            
+            let main_continue_btn = document.querySelector(".main-continue-button");
+            this.input.bind(main_continue_btn, "click", () => {
+                this.win = false;
+                this.html.update(this.grid, {
+                    gameover: this.gameover,
+                    win: this.win,
+                });
             });
         }
 
@@ -82,7 +107,7 @@ var game; // for debugging
         }
 
         slide(dir) {
-            if (this.gameover) {
+            if (this.gameover || this.win) {
                 return;
             }
             // Master slide function
@@ -106,6 +131,10 @@ var game; // for debugging
             this.grid.forEachTile((row, col, tile) => {
                 if (tile != null) {
                     tile.new = false; // Make sure tile doesn't animate like new tile
+                    if (tile.value == 2048 && !this.firstWin) {
+                        this.firstWin = true
+                        this.win = true
+                    }
                 }
             });
 
@@ -132,7 +161,7 @@ var game; // for debugging
 
             // Create new tile from merged tiles
             let merged = new Tile(tileNext.getPos(), tileCur.value * 2);
-            merged.merge(tileCur, tileNext);
+            merged.mergedWith = [tileCur, tileNext];
 
             this.changeScore(merged.value);
             // Modify row
@@ -307,6 +336,11 @@ var game; // for debugging
                         }
                     });
                 });
+                if (environment.win) {
+                    $(".game-message").addClass("game-win");
+                } else {
+                    $(".game-message").removeClass("game-win");
+                }
                 if (environment.gameover) {
                     $(".game-message").addClass("game-over");
                 } else {
@@ -359,9 +393,15 @@ var game; // for debugging
                 $("<p>"),
                 $("<div>", {
                     tabindex: "0",
+                    class: "button main-continue-button",
+                    text: "▶",
+                }),
+                $("<div>", {
+                    tabindex: "0",
                     class: "button main-reset-button",
                     text: "⟳",
-                })
+                }),
+                
             );
 
             $(game_container).append(game_message);
@@ -648,10 +688,6 @@ var game; // for debugging
             }
             this.row = position.row;
             this.col = position.col;
-        }
-
-        merge(tile1, tile2) {
-            this.mergedWith = [tile1, tile2];
         }
 
         getPos() {
