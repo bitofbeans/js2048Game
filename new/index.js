@@ -38,20 +38,6 @@ var game; // for debugging
             this.input.addKeys("d", () => this.slide("right"));
             this.input.addKeys("w", () => this.slide("up"));
             this.input.addKeys("s", () => this.slide("down"));
-            this.input.addKeys(" ", () => {
-                this.win = true
-                this.firstWin = true
-                this.grid.forEachTile((row, col, tile) => {
-                    if (tile != null) {
-                        tile.new = false; // Make sure tile doesn't animate like new tile
-                    }
-                });
-
-                this.html.update(this.grid, {
-                    gameover: this.gameover,
-                    win: this.win,
-                });
-            });
 
             let del_btn = document.querySelector(".delete-button");
             this.input.bind(del_btn, "click", () => {
