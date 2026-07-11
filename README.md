@@ -2,7 +2,9 @@
 2048 game clone made to be injected into any website
 
 Raw Injection Code -> /new/script.js
+
 Raw Script Code -> /new/index.js
+
 Raw Stylesheet -> /new/style.css
 
 Bookmarklet code:
